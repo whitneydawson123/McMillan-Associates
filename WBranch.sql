@@ -1,18 +1,18 @@
 CREATE TABLE departments(
 	depid INT NOT NULL AUTO_INCREMENT,
-    IT VARCHAR(20) NOT NULL,
-    Marketing VARCHAR(20) NOT NULL,
-    Finance VARCHAR(20) NOT NULL,
-    HR VARCHAR(20) NOT NULL,
+    IT BOOLEAN NOT NULL,
+    Marketing BOOLEAN NOT NULL,
+    Finance BOOLEAN NOT NULL,
+    HR BOOLEAN NOT NULL,
     PRIMARY KEY (depid),
     FOREIGN KEY (mgrid) REFERENCES manager(mgrid)
 );
 
 CREATE TABLE location(
 	locid INT NOT NULL AUTO_INCREMENT,
-    Minnesota_MN VARCHAR(20) NOT NULL,
-    Charlotte_NC VARCHAR(20) NOT NULL,
-    Tampa_FL VARCHAR(20) NOT NULL,
+    Minnesota_MN BOOLEAN NOT NULL,
+    Charlotte_NC BOOLEAN NOT NULL,
+    Tampa_FL BOOLEAN NOT NULL,
     PRIMARY KEY (locid)
 );
 
