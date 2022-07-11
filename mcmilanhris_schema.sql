@@ -84,7 +84,11 @@ maternityleave VARCHAR(45) NOT NULL,
 FOREIGN KEY (emplid) REFERENCES employee(emplid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE Certifications(
+--
+-- Table structure for table `certifications`
+--
+
+CREATE TABLE certifications(
 certid INT NOT NULL,
 emplid INT NOT NULL,
 Cloud_Architect BOOLEAN NOT NULL,
@@ -105,11 +109,13 @@ SHRM_Certification BOOLEAN NOT NULL,
 SHRM_Certification_Experation DATE ('mm.dd.yyyy') NOT NULL,
 PRIMARY KEY (certid),
 FOREIGN KEY (emplid) REFERENCES employee(emplid)
-);
+)
 
------------------------------------------------------------------
+--
+-- Table structure for table `training`
+--
 
-CREATE TABLE Training(
+CREATE TABLE training(
 trainingid INT NOT NULL,
 emplid INT NOT NULL,
 cybersec BOOLEAN NOT NULL,
@@ -122,11 +128,13 @@ intellectualproperty BOOLEAN NOT NULL,
 intellectualpropertydate DATE ('mm.dd.yyyy') NOT NULL,
 PRIMARY KEY (trainingid),
 FOREIGN KEY (emplid) REFERENCES employee(emplid)
-);
+)
 
-------------------------------------------------------------
+--
+-- Table structure for table `qualifications`
+--
 
-CREATE TABLE Qualifications
+CREATE TABLE qualifications
 qualid INT NOT NULL,
 emplid INT NOT NULL,
 associates_degree BOOLEAN NOT NULL,
@@ -142,4 +150,61 @@ experience INT NOT NULL,
 language_ability BOOLEAN NOT NULL,
 PRIMARY KEY (qualid),
 FOREIGN KEY (emplid) REFERENCES employee(emplid)
-);
+)
+
+--
+-- Table structure for table `departments`
+--
+
+CREATE TABLE departments(
+	depid INT NOT NULL AUTO_INCREMENT,
+    IT BOOLEAN NOT NULL,
+    Marketing BOOLEAN NOT NULL,
+    Finance BOOLEAN NOT NULL,
+    HR BOOLEAN NOT NULL,
+    PRIMARY KEY (depid),
+    FOREIGN KEY (mgrid) REFERENCES manager(mgrid)
+)
+
+--
+-- Table structure for table `location`
+--
+
+CREATE TABLE location(
+	locid INT NOT NULL AUTO_INCREMENT,
+    Minnesota_MN BOOLEAN NOT NULL,
+    Charlotte_NC BOOLEAN NOT NULL,
+    Tampa_FL BOOLEAN NOT NULL,
+    PRIMARY KEY (locid)
+)
+
+--
+-- Table structure for table `job`
+--
+
+CREATE TABLE job(
+	jobid INT NOT NULL AUTO_INCREMENT,
+    net_developer BOOLEAN NOT NULL,
+    front_end_developer BOOLEAN NOT NULL,
+    hr_expert BOOLEAN NOT NULL,
+    marketing BOOLEAN NOT NULL,
+    accounting BOOLEAN NOT NULL,
+    back_end_developer BOOLEAN NOT NULL,
+    PRIMARY KEY(jobid),
+    FOREIGN KEY (depid) REFERENCES departments (depid)
+)
+
+--
+-- Table structure for table `manager`
+--
+
+CREATE TABLE manager(
+	mgrid INT NOT NULL AUTO_INCREMENT,
+    IT_Manager BOOLEAN NOT NULL,
+    Marketing_Manager BOOLEAN NOT NULL,
+    Finance_Manager BOOLEAN NOT NULL,
+    HR_Manager BOOLEAN NOT NULL,
+    PRIMARY KEY (mgrid),
+    FOREIGN KEY (depid) REFERENCES departments (depid)
+)
+
