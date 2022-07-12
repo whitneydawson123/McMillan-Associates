@@ -80,6 +80,8 @@ maternityleave VARCHAR(45) NOT NULL,
 PRIMARY KEY  (benid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Table structure for table 'departments'
+
 CREATE TABLE departments(
 	depid INT UNSIGNED NOT NULL AUTO_INCREMENT,
     IT BOOLEAN NOT NULL,
@@ -88,6 +90,8 @@ CREATE TABLE departments(
     HR BOOLEAN NOT NULL,
     PRIMARY KEY (depid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table structure for table 'manager'
 
 CREATE TABLE manager(
 	mgrid INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -99,6 +103,8 @@ CREATE TABLE manager(
     PRIMARY KEY (mgrid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Table structure for table 'location'
+
 CREATE TABLE location(
 	locid INT UNSIGNED NOT NULL AUTO_INCREMENT,
     Minnesota_MN BOOLEAN NOT NULL,
@@ -106,6 +112,8 @@ CREATE TABLE location(
     Tampa_FL BOOLEAN NOT NULL,
     PRIMARY KEY (locid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table structure for table 'job'
 
 CREATE TABLE job(
 	jobid INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -119,6 +127,90 @@ CREATE TABLE job(
     PRIMARY KEY(jobid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Table structure for table `certifications`
+
+CREATE TABLE Certifications(
+certid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid SMALLINT UNSIGNED NOT NULL,
+Cloud_Architect BOOLEAN NOT NULL,
+Cloud_Architect_Experation DATE,
+Solutions_Architect BOOLEAN NOT NULL,
+Solutions_Architect_Experation DATE,
+Attribution_Testing BOOLEAN NOT NULL,
+Attribution_Testing_Experation DATE,
+Automation_Artificial BOOLEAN NOT NULL,
+Automation_Artificial_Experation DATE,
+Financial_Planner BOOLEAN NOT NULL,
+Financial_Planner_Experation DATE,
+Financial_Consultant BOOLEAN NOT NULL,
+Financial_Consultant_Experation DATE,
+HRCI_Certification BOOLEAN NOT NULL,
+HRCI_Certification_Experation DATE,
+SHRM_Certification BOOLEAN NOT NULL,
+SHRM_Certification_Experation DATE,
+PRIMARY KEY (certid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table structure for table `training`
+
+CREATE TABLE Training(
+trainid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid SMALLINT UNSIGNED NOT NULL,
+cybersec BOOLEAN NOT NULL,
+cybersecdate DATE,
+harrassment BOOLEAN NOT NULL,
+harassmentdate DATE,
+companyculture BOOLEAN NOT NULL,
+companyculturedate DATE,
+intellectualproperty BOOLEAN NOT NULL,
+intellectualpropertydate DATE,
+PRIMARY KEY (trainid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table structure for table `qualifications`
+
+CREATE TABLE Qualifications(
+qualid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid SMALLINT UNSIGNED NOT NULL,
+associates_degree BOOLEAN NOT NULL,
+associates_degree_school VARCHAR(100) NOT NULL,
+associates_degree_date DATE,
+bachelors_degree BOOLEAN NOT NULL,
+bachelors_degree_school VARCHAR(100) NOT NULL,
+bachelors_degree_date DATE,
+masters_degree BOOLEAN NOT NULL,
+masters_degree_school VARCHAR(100) NOT NULL,
+masters_degree_date DATE,
+experience INT NOT NULL,
+language_ability BOOLEAN NOT NULL,
+PRIMARY KEY (qualid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table structure for table `applicant tracking`
+
+CREATE TABLE Applicant_Tracking(
+appid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+app_fname VARCHAR(50) NOT NULL,
+app_lname VARCHAR(50) NOT NULL,
+app_email VARCHAR(50) NOT NULL,
+app_phase1 BOOLEAN NOT NULL,
+app_submission BOOLEAN NOT NULL,
+app_submission_date DATE,
+app_resume BOOLEAN NOT NULL,
+qualid SMALLINT UNSIGNED NOT NULL,
+certid SMALLINT UNSIGNED NOT NULL,
+app_phase2 BOOLEAN NOT NULL,
+app_interview BOOLEAN NOT NULL,
+app_interview_date DATE,
+interviewer_notes VARCHAR(100) NOT NULL,
+app_phase3 BOOLEAN NOT NULL,
+app_hired BOOLEAN NOT NULL,
+app_hired_date DATE,
+PRIMARY KEY (appid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- table alterations to add foreign keys
+
 ALTER TABLE employee
 ADD FOREIGN KEY (mgrid) REFERENCES manager(mgrid),
 ADD FOREIGN KEY (jobid) REFERENCES job(jobid);
@@ -130,7 +222,8 @@ ADD FOREIGN KEY (jobid) REFERENCES job(jobid);
   
   FOREIGN KEY (trainingid) REFERENCES training(trainingid)
   */
-  
+
+
 ALTER TABLE state_tax
 ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
 
@@ -148,3 +241,16 @@ ADD FOREIGN KEY (depid) REFERENCES departments(depid);
 
 ALTER TABLE job
 ADD FOREIGN KEY (depid) REFERENCES departments(depid);
+
+ALTER TABLE certifications
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE training
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE qualifications
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE applicant_tracking
+ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
+ADD FOREIGN KEY (certid) REFERENCES certifications(certid);
