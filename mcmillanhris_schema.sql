@@ -7,28 +7,20 @@ USE mcmillanhris;
 --
 
 CREATE TABLE employee(
-  emplid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  emplid INT UNSIGNED NOT NULL AUTO_INCREMENT,
   fname VARCHAR(45) NOT NULL,
   lname VARCHAR(45) NOT NULL,
   address VARCHAR(45) NOT NULL,
   city VARCHAR(45) NOT NULL,
   state VARCHAR(2) NOT NULL,
   zip VARCHAR(10) NOT NULL,
-  mgrid SMALLINT UNSIGNED NOT NULL,
+  mgrid INT UNSIGNED NOT NULL,
   employment_status VARCHAR(45) NOT NULL,
-  qualid SMALLINT UNSIGNED NOT NULL,
-  certid SMALLINT UNSIGNED NOT NULL,
-  jobid SMALLINT UNSIGNED NOT NULL,
-  trainingid SMALLINT UNSIGNED NOT NULL,
+  qualid INT UNSIGNED NOT NULL,
+  certid INT UNSIGNED NOT NULL,
+  jobid INT UNSIGNED NOT NULL,
+  trainingid INT UNSIGNED NOT NULL,
   PRIMARY KEY  (emplid)
-  /*
-  foreign key constraints go here once the other tables are implemented
-  FOREIGN KEY (mgrid) REFERENCES manager(mgrid)
-  FOREIGN KEY (qualid) REFERENCES qualifications(qualid)
-  FOREIGN KEY (certid) REFERENCES certifications(certid)
-  FOREIGN KEY (jobid) REFERENCES job(jobid)
-  FOREIGN KEY (trainingid) REFERENCES training(trainingid)
-  */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -36,12 +28,11 @@ CREATE TABLE employee(
 --
 
 CREATE TABLE state_tax(
-statetaxid SMALLINT UNSIGNED NOT NULL,
-emplid SMALLINT UNSIGNED NOT NULL,
+statetaxid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 required BOOLEAN,
 rate DOUBLE NOT NULL,
-PRIMARY KEY  (statetaxid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+PRIMARY KEY  (statetaxid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -49,12 +40,11 @@ FOREIGN KEY (emplid) REFERENCES employee(emplid)
 --
 
 CREATE TABLE federal_tax(
-fedtaxid SMALLINT UNSIGNED NOT NULL,
-emplid SMALLINT UNSIGNED NOT NULL,
+fedtaxid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 bracket VARCHAR(10) NOT NULL,
 rate DOUBLE NOT NULL,
-PRIMARY KEY  (fedtaxid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+PRIMARY KEY  (fedtaxid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -62,15 +52,14 @@ FOREIGN KEY (emplid) REFERENCES employee(emplid)
 --
 
 CREATE TABLE payroll(
-payrollid SMALLINT UNSIGNED NOT NULL,
-emplid SMALLINT UNSIGNED NOT NULL,
+payrollid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 rates DOUBLE NOT NULL,
 rates_overtime DOUBLE NOT NULL,
-totalhours SMALLINT NOT NULL,
-totalovertime SMALLINT NOT NULL,
+totalhours INT NOT NULL,
+totalovertime INT NOT NULL,
 grosspay DOUBLE NOT NULL,
-PRIMARY KEY  (payrollid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+PRIMARY KEY  (payrollid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -79,8 +68,8 @@ FOREIGN KEY (emplid) REFERENCES employee(emplid)
 --
 
 CREATE TABLE benefits(
-benid SMALLINT UNSIGNED NOT NULL,
-emplid SMALLINT UNSIGNED NOT NULL,
+benid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 healthcare VARCHAR(45) NOT NULL,
 dentalcare VARCHAR(45) NOT NULL,
 annual_sickdays SMALLINT NOT NULL,
@@ -88,12 +77,11 @@ annual_vacationdays SMALLINT NOT NULL,
 pension DOUBLE NOT NULL,
 ira VARCHAR(45) NOT NULL,
 maternityleave VARCHAR(45) NOT NULL,
-PRIMARY KEY  (benid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+PRIMARY KEY  (benid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE departments(
-	depid INT NOT NULL AUTO_INCREMENT,
+	depid INT UNSIGNED NOT NULL AUTO_INCREMENT,
     IT BOOLEAN NOT NULL,
     Marketing BOOLEAN NOT NULL,
     Finance BOOLEAN NOT NULL,
@@ -102,18 +90,17 @@ CREATE TABLE departments(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE manager(
-	mgrid INT NOT NULL AUTO_INCREMENT,
-    depid INT NOT NULL,
+	mgrid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    depid INT UNSIGNED NOT NULL,
     IT_Manager BOOLEAN NOT NULL,
     Marketing_Manager BOOLEAN NOT NULL,
     Finance_Manager BOOLEAN NOT NULL,
     HR_Manager BOOLEAN NOT NULL,
-    PRIMARY KEY (mgrid),
-    FOREIGN KEY (depid) REFERENCES departments (depid)
+    PRIMARY KEY (mgrid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE location(
-	locid INT NOT NULL AUTO_INCREMENT,
+	locid INT UNSIGNED NOT NULL AUTO_INCREMENT,
     Minnesota_MN BOOLEAN NOT NULL,
     Charlotte_NC BOOLEAN NOT NULL,
     Tampa_FL BOOLEAN NOT NULL,
@@ -121,14 +108,43 @@ CREATE TABLE location(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE job(
-	jobid INT NOT NULL AUTO_INCREMENT,
-	depid INT NOT NULL,
+	jobid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	depid INT UNSIGNED NOT NULL,
     net_developer BOOLEAN NOT NULL,
     front_end_developer BOOLEAN NOT NULL,
     hr_expert BOOLEAN NOT NULL,
     marketing BOOLEAN NOT NULL,
     accounting BOOLEAN NOT NULL,
     back_end_developer BOOLEAN NOT NULL,
-    PRIMARY KEY(jobid),
-    FOREIGN KEY (depid) REFERENCES departments (depid)
+    PRIMARY KEY(jobid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE employee
+ADD FOREIGN KEY (mgrid) REFERENCES manager(mgrid),
+ADD FOREIGN KEY (jobid) REFERENCES job(jobid);
+  /*
+  foreign key constraints go here once the other tables are implemented
+  
+  ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid)
+  ADD FOREIGN KEY (certid) REFERENCES certifications(certid)
+  
+  FOREIGN KEY (trainingid) REFERENCES training(trainingid)
+  */
+  
+ALTER TABLE state_tax
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE federal_tax
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE payroll
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE benefits
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE manager
+ADD FOREIGN KEY (depid) REFERENCES departments(depid);
+
+ALTER TABLE job
+ADD FOREIGN KEY (depid) REFERENCES departments(depid);
