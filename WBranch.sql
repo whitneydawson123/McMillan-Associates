@@ -4,8 +4,18 @@ CREATE TABLE departments(
     Marketing BOOLEAN NOT NULL,
     Finance BOOLEAN NOT NULL,
     HR BOOLEAN NOT NULL,
-    PRIMARY KEY (depid),
-    FOREIGN KEY (mgrid) REFERENCES manager(mgrid)
+    PRIMARY KEY (depid)
+);
+
+CREATE TABLE manager(
+	mgrid INT NOT NULL AUTO_INCREMENT,
+    depid INT NOT NULL,
+    IT_Manager BOOLEAN NOT NULL,
+    Marketing_Manager BOOLEAN NOT NULL,
+    Finance_Manager BOOLEAN NOT NULL,
+    HR_Manager BOOLEAN NOT NULL,
+    PRIMARY KEY (mgrid),
+    FOREIGN KEY (depid) REFERENCES departments (depid)
 );
 
 CREATE TABLE location(
@@ -25,15 +35,5 @@ CREATE TABLE job(
     accounting BOOLEAN NOT NULL,
     back_end_developer BOOLEAN NOT NULL,
     PRIMARY KEY(jobid),
-    FOREIGN KEY (depid) REFERENCES departments (depid)
-);
-
-CREATE TABLE manager(
-	mgrid INT NOT NULL AUTO_INCREMENT,
-    IT_Manager BOOLEAN NOT NULL,
-    Marketing_Manager BOOLEAN NOT NULL,
-    Finance_Manager BOOLEAN NOT NULL,
-    HR_Manager BOOLEAN NOT NULL,
-    PRIMARY KEY (mgrid),
     FOREIGN KEY (depid) REFERENCES departments (depid)
 );
