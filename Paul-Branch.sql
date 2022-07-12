@@ -94,6 +94,3 @@ ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
 ALTER TABLE applicant_tracking
 ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
 ADD FOREIGN KEY (certid) REFERENCES certifications(certid);
-ALTER TABLE applicant_tracking
-ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
-ADD FOREIGN KEY (certid) REFERENCES certifications(certid);
