@@ -19,9 +19,8 @@ HRCI_Certification BOOLEAN NOT NULL,
 HRCI_Certification_Experation DATE,
 SHRM_Certification BOOLEAN NOT NULL,
 SHRM_Certification_Experation DATE,
-PRIMARY KEY (certid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+PRIMARY KEY (certid))
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `training`
 
@@ -36,9 +35,8 @@ companyculture BOOLEAN NOT NULL,
 companyculturedate DATE,
 intellectualproperty BOOLEAN NOT NULL,
 intellectualpropertydate DATE,
-PRIMARY KEY (trainid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+PRIMARY KEY (trainid))
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `qualifications`
 
@@ -56,9 +54,8 @@ masters_degree_school VARCHAR(100) NOT NULL,
 masters_degree_date DATE,
 experience INT NOT NULL,
 language_ability BOOLEAN NOT NULL,
-PRIMARY KEY (qualid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+PRIMARY KEY (qualid))
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `applicant tracking`
 
@@ -80,8 +77,20 @@ interviewer_notes VARCHAR(100) NOT NULL,
 app_phase3 BOOLEAN NOT NULL,
 app_hired BOOLEAN NOT NULL,
 app_hired_date DATE,
-PRIMARY KEY (appid),
-FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
-FOREIGN KEY (certid) REFERENCES certifications(certid)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+PRIMARY KEY (appid))
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- table alterations to add foreign keys
+
+ALTER TABLE certifications
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE training
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE qualifications
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+
+ALTER TABLE applicant_tracking
+ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
+ADD FOREIGN KEY (certid) REFERENCES certifications(certid);
