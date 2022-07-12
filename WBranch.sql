@@ -28,6 +28,7 @@ CREATE TABLE location(
 
 CREATE TABLE job(
 	jobid INT NOT NULL AUTO_INCREMENT,
+    depid INT NOT NULL,
     net_developer BOOLEAN NOT NULL,
     front_end_developer BOOLEAN NOT NULL,
     hr_expert BOOLEAN NOT NULL,
