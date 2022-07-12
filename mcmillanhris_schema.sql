@@ -19,7 +19,7 @@ CREATE TABLE employee(
   qualid INT UNSIGNED NOT NULL,
   certid INT UNSIGNED NOT NULL,
   jobid INT UNSIGNED NOT NULL,
-  trainingid INT UNSIGNED NOT NULL,
+  trainid INT UNSIGNED NOT NULL,
   PRIMARY KEY  (emplid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -129,9 +129,9 @@ CREATE TABLE job(
 
 -- Table structure for table `certifications`
 
-CREATE TABLE Certifications(
-certid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid SMALLINT UNSIGNED NOT NULL,
+CREATE TABLE certifications(
+certid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 Cloud_Architect BOOLEAN NOT NULL,
 Cloud_Architect_Experation DATE,
 Solutions_Architect BOOLEAN NOT NULL,
@@ -153,9 +153,9 @@ PRIMARY KEY (certid)
 
 -- Table structure for table `training`
 
-CREATE TABLE Training(
-trainid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid SMALLINT UNSIGNED NOT NULL,
+CREATE TABLE training(
+trainid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 cybersec BOOLEAN NOT NULL,
 cybersecdate DATE,
 harrassment BOOLEAN NOT NULL,
@@ -169,9 +169,9 @@ PRIMARY KEY (trainid)
 
 -- Table structure for table `qualifications`
 
-CREATE TABLE Qualifications(
-qualid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid SMALLINT UNSIGNED NOT NULL,
+CREATE TABLE qualifications(
+qualid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 associates_degree BOOLEAN NOT NULL,
 associates_degree_school VARCHAR(100) NOT NULL,
 associates_degree_date DATE,
@@ -188,8 +188,8 @@ PRIMARY KEY (qualid)
 
 -- Table structure for table `applicant tracking`
 
-CREATE TABLE Applicant_Tracking(
-appid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE applicant_tracking(
+appid INT UNSIGNED NOT NULL AUTO_INCREMENT,
 app_fname VARCHAR(50) NOT NULL,
 app_lname VARCHAR(50) NOT NULL,
 app_email VARCHAR(50) NOT NULL,
@@ -197,8 +197,8 @@ app_phase1 BOOLEAN NOT NULL,
 app_submission BOOLEAN NOT NULL,
 app_submission_date DATE,
 app_resume BOOLEAN NOT NULL,
-qualid SMALLINT UNSIGNED NOT NULL,
-certid SMALLINT UNSIGNED NOT NULL,
+qualid INT UNSIGNED NOT NULL,
+certid INT UNSIGNED NOT NULL,
 app_phase2 BOOLEAN NOT NULL,
 app_interview BOOLEAN NOT NULL,
 app_interview_date DATE,
@@ -213,16 +213,10 @@ PRIMARY KEY (appid)
 
 ALTER TABLE employee
 ADD FOREIGN KEY (mgrid) REFERENCES manager(mgrid),
-ADD FOREIGN KEY (jobid) REFERENCES job(jobid);
-  /*
-  foreign key constraints go here once the other tables are implemented
-  
-  ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid)
-  ADD FOREIGN KEY (certid) REFERENCES certifications(certid)
-  
-  FOREIGN KEY (trainingid) REFERENCES training(trainingid)
-  */
-
+ADD FOREIGN KEY (jobid) REFERENCES job(jobid),
+ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
+ADD FOREIGN KEY (certid) REFERENCES certifications(certid),
+ADD FOREIGN KEY (trainid) REFERENCES training(trainid);
 
 ALTER TABLE state_tax
 ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
