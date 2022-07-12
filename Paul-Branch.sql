@@ -1,6 +1,4 @@
---
 -- Table structure for table `certifications`
---
 
 CREATE TABLE Certifications(
 certid SMALLINT UNSIGNED NOT NULL,
@@ -25,9 +23,7 @@ PRIMARY KEY (certid),
 FOREIGN KEY (emplid) REFERENCES employee(emplid)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
 -- Table structure for table `training`
---
 
 CREATE TABLE Training(
 trainid SMALLINT UNSIGNED NOT NULL,
@@ -44,9 +40,7 @@ PRIMARY KEY (trainid),
 FOREIGN KEY (emplid) REFERENCES employee(emplid)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
 -- Table structure for table `qualifications`
---
 
 CREATE TABLE Qualifications(
 qualid SMALLINT UNSIGNED NOT NULL,
@@ -65,3 +59,29 @@ language_ability BOOLEAN NOT NULL,
 PRIMARY KEY (qualid),
 FOREIGN KEY (emplid) REFERENCES employee(emplid)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table structure for table `applicant tracking`
+
+CREATE TABLE Applicant_Tracking(
+appid SMALLINT UNSIGNED NOT NULL,
+app_fname VARCHAR(50) NOT NULL,
+app_lname VARCHAR(50) NOT NULL,
+app_email VARCHAR(50) NOT NULL,
+app_phase1 BOOLEAN NOT NULL,
+app_submission BOOLEAN NOT NULL,
+app_submission_date DATE,
+app_resume BOOLEAN NOT NULL,
+qualid SMALLINT UNSIGNED NOT NULL,
+certid SMALLINT UNSIGNED NOT NULL,
+app_phase2 BOOLEAN NOT NULL,
+app_interview BOOLEAN NOT NULL,
+app_interview_date DATE,
+interviewer_notes VARCHAR(100) NOT NULL,
+app_phase3 BOOLEAN NOT NULL,
+app_hired BOOLEAN NOT NULL,
+app_hired_date DATE,
+PRIMARY KEY (appid),
+FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
+FOREIGN KEY (certid) REFERENCES certifications(certid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
