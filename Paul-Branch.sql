@@ -1,8 +1,8 @@
 -- Table structure for table `certifications`
 
-CREATE TABLE Certifications(
-certid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid SMALLINT UNSIGNED NOT NULL,
+CREATE TABLE certifications(
+certid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 Cloud_Architect BOOLEAN NOT NULL,
 Cloud_Architect_Experation DATE,
 Solutions_Architect BOOLEAN NOT NULL,
@@ -24,9 +24,9 @@ PRIMARY KEY (certid)
 
 -- Table structure for table `training`
 
-CREATE TABLE Training(
-trainid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid SMALLINT UNSIGNED NOT NULL,
+CREATE TABLE training(
+trainid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 cybersec BOOLEAN NOT NULL,
 cybersecdate DATE,
 harrassment BOOLEAN NOT NULL,
@@ -40,9 +40,9 @@ PRIMARY KEY (trainid)
 
 -- Table structure for table `qualifications`
 
-CREATE TABLE Qualifications(
-qualid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid SMALLINT UNSIGNED NOT NULL,
+CREATE TABLE qualifications(
+qualid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED NOT NULL,
 associates_degree BOOLEAN NOT NULL,
 associates_degree_school VARCHAR(100) NOT NULL,
 associates_degree_date DATE,
@@ -59,8 +59,8 @@ PRIMARY KEY (qualid)
 
 -- Table structure for table `applicant tracking`
 
-CREATE TABLE Applicant_Tracking(
-appid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE applicant_tracking(
+appid INT UNSIGNED NOT NULL AUTO_INCREMENT,
 app_fname VARCHAR(50) NOT NULL,
 app_lname VARCHAR(50) NOT NULL,
 app_email VARCHAR(50) NOT NULL,
@@ -91,6 +91,9 @@ ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
 ALTER TABLE qualifications
 ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
 
+ALTER TABLE applicant_tracking
+ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
+ADD FOREIGN KEY (certid) REFERENCES certifications(certid);
 ALTER TABLE applicant_tracking
 ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
 ADD FOREIGN KEY (certid) REFERENCES certifications(certid);
