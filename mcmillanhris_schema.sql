@@ -99,7 +99,7 @@ CREATE TABLE departments(
     Finance BOOLEAN NOT NULL,
     HR BOOLEAN NOT NULL,
     PRIMARY KEY (depid)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE manager(
 	mgrid INT NOT NULL AUTO_INCREMENT,
@@ -110,7 +110,7 @@ CREATE TABLE manager(
     HR_Manager BOOLEAN NOT NULL,
     PRIMARY KEY (mgrid),
     FOREIGN KEY (depid) REFERENCES departments (depid)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE location(
 	locid INT NOT NULL AUTO_INCREMENT,
@@ -118,10 +118,13 @@ CREATE TABLE location(
     Charlotte_NC BOOLEAN NOT NULL,
     Tampa_FL BOOLEAN NOT NULL,
     PRIMARY KEY (locid)
-);
+CREATE TABLE job(
+	jobid INT NOT NULL AUTO_INCREMENT,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE job(
 	jobid INT NOT NULL AUTO_INCREMENT,
+	depid INT NOT NULL,
     net_developer BOOLEAN NOT NULL,
     front_end_developer BOOLEAN NOT NULL,
     hr_expert BOOLEAN NOT NULL,
@@ -130,5 +133,4 @@ CREATE TABLE job(
     back_end_developer BOOLEAN NOT NULL,
     PRIMARY KEY(jobid),
     FOREIGN KEY (depid) REFERENCES departments (depid)
-);
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
