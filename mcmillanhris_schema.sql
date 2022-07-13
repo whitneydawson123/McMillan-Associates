@@ -132,6 +132,7 @@ CREATE TABLE job(
 CREATE TABLE certifications(
 certid INT UNSIGNED NOT NULL AUTO_INCREMENT,
 emplid INT UNSIGNED NOT NULL,
+appid INT UNSIGNED NOT NULL,	
 Cloud_Architect BOOLEAN NOT NULL,
 Cloud_Architect_Experation DATE,
 Solutions_Architect BOOLEAN NOT NULL,
@@ -172,6 +173,7 @@ PRIMARY KEY (trainid)
 CREATE TABLE qualifications(
 qualid INT UNSIGNED NOT NULL AUTO_INCREMENT,
 emplid INT UNSIGNED NOT NULL,
+appid INT UNSIGNED NOT NULL,
 associates_degree BOOLEAN NOT NULL,
 associates_degree_school VARCHAR(100) NOT NULL,
 associates_degree_date DATE,
@@ -237,13 +239,15 @@ ALTER TABLE job
 ADD FOREIGN KEY (depid) REFERENCES departments(depid);
 
 ALTER TABLE certifications
-ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid),
+ADD FOREIGN KEY (appid) REFERENCES applicant_tracking(appid);
 
 ALTER TABLE training
 ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
 
 ALTER TABLE qualifications
-ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid),
+ADD FOREIGN KEY (appid) REFERENCES applicant_tracking(appid);
 
 ALTER TABLE applicant_tracking
 ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
