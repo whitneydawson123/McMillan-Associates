@@ -1,8 +1,9 @@
 -- Table structure for table `certifications`
 
 CREATE TABLE Certifications(
-certid SMALLINT UNSIGNED NOT NULL,
-emplid SMALLINT UNSIGNED NOT NULL,
+certid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED NOT NULL,
+appid INT UNSIGNED NOT NULL,
 Cloud_Architect BOOLEAN NOT NULL,
 Cloud_Architect_Experation DATE,
 Solutions_Architect BOOLEAN NOT NULL,
@@ -25,8 +26,8 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- Table structure for table `training`
 
 CREATE TABLE Training(
-trainid SMALLINT UNSIGNED NOT NULL,
-emplid SMALLINT UNSIGNED NOT NULL,
+trainid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED NOT NULL,
 cybersec BOOLEAN NOT NULL,
 cybersecdate DATE,
 harrassment BOOLEAN NOT NULL,
@@ -41,8 +42,9 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- Table structure for table `qualifications`
 
 CREATE TABLE Qualifications(
-qualid SMALLINT UNSIGNED NOT NULL,
-emplid SMALLINT UNSIGNED NOT NULL,
+qualid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED NOT NULL,
+appid INT UNSIGNED NOT NULL,
 associates_degree BOOLEAN NOT NULL,
 associates_degree_school VARCHAR(100) NOT NULL,
 associates_degree_date DATE,
@@ -60,7 +62,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- Table structure for table `applicant tracking`
 
 CREATE TABLE Applicant_Tracking(
-appid SMALLINT UNSIGNED NOT NULL,
+appid INT UNSIGNED NOT NULL,
 app_fname VARCHAR(50) NOT NULL,
 app_lname VARCHAR(50) NOT NULL,
 app_email VARCHAR(50) NOT NULL,
@@ -68,8 +70,8 @@ app_phase1 BOOLEAN NOT NULL,
 app_submission BOOLEAN NOT NULL,
 app_submission_date DATE,
 app_resume BOOLEAN NOT NULL,
-qualid SMALLINT UNSIGNED NOT NULL,
-certid SMALLINT UNSIGNED NOT NULL,
+qualid INT UNSIGNED NOT NULL,
+certid INT UNSIGNED NOT NULL,
 app_phase2 BOOLEAN NOT NULL,
 app_interview BOOLEAN NOT NULL,
 app_interview_date DATE,
@@ -83,13 +85,15 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- table alterations to add foreign keys
 
 ALTER TABLE certifications
-ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid),
+ADD FOREIGN KEY (appid) REFERENCES applicant_tracking(appid);
 
 ALTER TABLE training
 ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
 
 ALTER TABLE qualifications
-ADD FOREIGN KEY (emplid) REFERENCES employee(emplid);
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid),
+ADD FOREIGN KEY (appid) REFERENCES applicant_tracking(appid);
 
 ALTER TABLE applicant_tracking
 ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
