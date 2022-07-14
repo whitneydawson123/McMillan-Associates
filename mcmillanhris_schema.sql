@@ -14,12 +14,12 @@ CREATE TABLE employee(
   city VARCHAR(45) NOT NULL,
   state VARCHAR(2) NOT NULL,
   zip VARCHAR(10) NOT NULL,
-  mgrid INT UNSIGNED NOT NULL,
+  mgrid INT UNSIGNED,
   employment_status VARCHAR(45) NOT NULL,
-  qualid INT UNSIGNED NOT NULL,
-  certid INT UNSIGNED NOT NULL,
-  jobid INT UNSIGNED NOT NULL,
-  trainid INT UNSIGNED NOT NULL,
+  qualid INT UNSIGNED,
+  certid INT UNSIGNED,
+  jobid INT UNSIGNED,
+  trainid INT UNSIGNED,
   PRIMARY KEY  (emplid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -29,7 +29,7 @@ CREATE TABLE employee(
 
 CREATE TABLE state_tax(
 statetaxid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED,
 required BOOLEAN,
 rate DOUBLE NOT NULL,
 PRIMARY KEY  (statetaxid)
@@ -41,7 +41,7 @@ PRIMARY KEY  (statetaxid)
 
 CREATE TABLE federal_tax(
 fedtaxid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED,
 bracket VARCHAR(10) NOT NULL,
 rate DOUBLE NOT NULL,
 PRIMARY KEY  (fedtaxid)
@@ -53,7 +53,7 @@ PRIMARY KEY  (fedtaxid)
 
 CREATE TABLE payroll(
 payrollid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED,
 rates DOUBLE NOT NULL,
 rates_overtime DOUBLE NOT NULL,
 totalhours INT NOT NULL,
@@ -69,7 +69,7 @@ PRIMARY KEY  (payrollid)
 
 CREATE TABLE benefits(
 benid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED,
 healthcare VARCHAR(45) NOT NULL,
 dentalcare VARCHAR(45) NOT NULL,
 annual_sickdays SMALLINT NOT NULL,
@@ -83,7 +83,7 @@ PRIMARY KEY  (benid)
 -- Table structure for table 'departments'
 
 CREATE TABLE departments(
-	depid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    depid INT UNSIGNED NOT NULL AUTO_INCREMENT,
     IT BOOLEAN NOT NULL,
     Marketing BOOLEAN NOT NULL,
     Finance BOOLEAN NOT NULL,
@@ -94,8 +94,8 @@ CREATE TABLE departments(
 -- Table structure for table 'manager'
 
 CREATE TABLE manager(
-	mgrid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    depid INT UNSIGNED NOT NULL,
+    mgrid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    depid INT UNSIGNED,
     IT_Manager BOOLEAN NOT NULL,
     Marketing_Manager BOOLEAN NOT NULL,
     Finance_Manager BOOLEAN NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE manager(
 -- Table structure for table 'location'
 
 CREATE TABLE location(
-	locid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    locid INT UNSIGNED NOT NULL AUTO_INCREMENT,
     Minnesota_MN BOOLEAN NOT NULL,
     Charlotte_NC BOOLEAN NOT NULL,
     Tampa_FL BOOLEAN NOT NULL,
@@ -116,8 +116,8 @@ CREATE TABLE location(
 -- Table structure for table 'job'
 
 CREATE TABLE job(
-	jobid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	depid INT UNSIGNED NOT NULL,
+    jobid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    depid INT UNSIGNED,
     net_developer BOOLEAN NOT NULL,
     front_end_developer BOOLEAN NOT NULL,
     hr_expert BOOLEAN NOT NULL,
@@ -131,8 +131,8 @@ CREATE TABLE job(
 
 CREATE TABLE certifications(
 certid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid INT UNSIGNED NOT NULL,
-appid INT UNSIGNED NOT NULL,	
+emplid INT UNSIGNED,
+appid INT UNSIGNED,	
 Cloud_Architect BOOLEAN NOT NULL,
 Cloud_Architect_Experation DATE,
 Solutions_Architect BOOLEAN NOT NULL,
@@ -156,7 +156,7 @@ PRIMARY KEY (certid)
 
 CREATE TABLE training(
 trainid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED,
 cybersec BOOLEAN NOT NULL,
 cybersecdate DATE,
 harrassment BOOLEAN NOT NULL,
@@ -172,8 +172,8 @@ PRIMARY KEY (trainid)
 
 CREATE TABLE qualifications(
 qualid INT UNSIGNED NOT NULL AUTO_INCREMENT,
-emplid INT UNSIGNED NOT NULL,
-appid INT UNSIGNED NOT NULL,
+emplid INT UNSIGNED,
+appid INT UNSIGNED,
 associates_degree BOOLEAN NOT NULL,
 associates_degree_school VARCHAR(100) NOT NULL,
 associates_degree_date DATE,
