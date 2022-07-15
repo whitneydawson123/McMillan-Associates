@@ -211,6 +211,21 @@ app_hired_date DATE,
 PRIMARY KEY (appid)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE evaluation(
+evalid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+emplid INT UNSIGNED,
+communication INT NOT NULL,
+job_knowledge INT NOT NULL,
+punctuality INT NOT NULL,
+depentability INT NOT NULL,
+overall INT NOT NULL,
+evaluator VARCHAR(50) NOT NULL,
+mgrid INT UNSIGNED,
+datewritten date NOT NULL,
+comment VARCHAR(100),
+PRIMARY KEY (evalid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- table alterations to add foreign keys
 
 ALTER TABLE employee
@@ -252,3 +267,7 @@ ADD FOREIGN KEY (appid) REFERENCES applicant_tracking(appid);
 ALTER TABLE applicant_tracking
 ADD FOREIGN KEY (qualid) REFERENCES qualifications(qualid),
 ADD FOREIGN KEY (certid) REFERENCES certifications(certid);
+
+ALTER TABLE evaluation
+ADD FOREIGN KEY (emplid) REFERENCES employee(emplid),
+ADD FOREIGN KEY (mgrid) REFERENCES manager(mgrid);
