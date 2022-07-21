@@ -42,7 +42,64 @@ public class MainMenu {
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+                startTaxInformationMenu();
+            }
+            else if (input.equals("9")){
+                running = false;
+            }
+            else{
+                System.out.println("Invalid input. \n");
+            }
+
+        }
+    }
+
+    static void taxInformationDisplay() {
+        System.out.println("Welcome to the tax information menu. Enter the corresponding number to select an option\n\n" +
+                "1. View employee federal tax information\n" +
+                "2. View employee state tax information\n" +
+                "3. Return to previous menu\n");
+    }
+
+    static void startTaxInformationMenu(){
+        String input;
+        Scanner keyboard = new Scanner(System.in);
+        boolean running = true;
+
+        while (running){
+            taxInformationDisplay();
+
+            input = keyboard.nextLine();
+
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
                 running = false;
             }
             else{
@@ -53,7 +110,14 @@ public class MainMenu {
     }
 
     static void applicationInformationDisplay() {
-        System.out.println();
+        System.out.println("This is the applicant information menu. Enter the corresponding number to select an option\n\n" +
+                "1. List all applicants\n" +
+                "2. Filter applicants by name\n" +
+                "3. Filter by applicant ID\n" +
+                "4. Filter by interview date\n" +
+                "5. Filter by application phase\n" +
+                "6. Certifications, qualifications, and training menu\n" +
+                "7. Return to main menu\n");
     }
 
     static void startApplicantInformationMenu(){
@@ -62,11 +126,35 @@ public class MainMenu {
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            applicationInformationDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
@@ -76,21 +164,49 @@ public class MainMenu {
         }
     }
 
-    static void qualificationsDisplay() {
-        System.out.println();
+    static void qualificationsCertificationsAndTrainingDisplay() {
+        System.out.println("This is the certifications menu. Enter the corresponding number to select an option\n" +
+                "View qualifications\n" +
+                "View certifications\n" +
+                "View training status\n" +
+                "Return to previous menu\n");
     }
 
-    static void startQualificationsMenu(){
+    static void startqualificationsCertificationsAndTrainingMenu(){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            qualificationsCertificationsAndTrainingDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
@@ -110,11 +226,35 @@ public class MainMenu {
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            certificationsDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
@@ -134,11 +274,35 @@ public class MainMenu {
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            trainingDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
@@ -158,11 +322,35 @@ public class MainMenu {
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            payrollDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
@@ -182,11 +370,35 @@ public class MainMenu {
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            benefitsDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
@@ -206,11 +418,35 @@ public class MainMenu {
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            evaluationsDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
@@ -230,11 +466,35 @@ public class MainMenu {
         boolean running = true;
 
         while (running){
-            employeeDisplay();
+            selfServiceDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("9")){
+            if(input.equals("1")){
+
+            }
+            else if (input.equals("2")){
+
+            }
+            else if (input.equals("3")){
+
+            }
+            else if (input.equals("4")){
+
+            }
+            else if (input.equals("5")){
+
+            }
+            else if (input.equals("6")){
+
+            }
+            else if (input.equals("7")){
+
+            }
+            else if (input.equals("8")){
+
+            }
+            else if (input.equals("9")){
                 running = false;
             }
             else{
