@@ -173,10 +173,12 @@ communication INT NOT NULL,
 job_knowledge INT NOT NULL,
 punctuality INT NOT NULL,
 dependability INT NULL,
-overall AVG NOT NULL,
+overall INT NOT NULL,
 evaluator VARCHAR (50) NOT NULL,
 date_written DATE,
 comments VARCHAR (50) NOT NULL,
+PRIMARY KEY (evalid)
+);
 
 -- table alterations to add foreign keys
 
