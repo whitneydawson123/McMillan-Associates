@@ -150,7 +150,7 @@ VALUES
     (19, "ITIL Certification", '2029-09-12'),
     (20, "ITIL Certification", '2029-09-12');
     
-INSERT INTO training(emplid, training_type, data_completed)
+INSERT INTO training(emplid, training_type, date_completed)
 VALUES
 	(1, "harrassment training", '2021-06-08'),
     (2, "harrassment training", '2021-06-08'),
@@ -218,7 +218,7 @@ VALUES
     (19, '2020-05-07', '2020-07-05'),
     (20, '2020-05-07', '2020-07-05');
    
-INSERT INTO application_stage(applid, app_stage, started, ended, interview_notes, passed)
+INSERT INTO application_stage(appid, app_stage, started, ended, interview_notes, passed)
 VALUES
 	(1, "hired", '2020-05-07', '2020-07-05', "They had very good communication skills", true),
     (2, "hired", '2020-05-07', '2020-07-05', "They had very good communication skills", true),
