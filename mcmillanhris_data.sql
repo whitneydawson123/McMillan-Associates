@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS=1;
+
 INSERT INTO mcmillanhris.employee(fname, lname, address, city, state, zip, email, phone, employment_status)
 VALUES
 ('Sarah', 'Brown', '77 High Street', 'Minneapolis', 'MN', '56792', 'sarahbrown@gmail.com', '123-456-7890', 'hired'),
@@ -234,6 +236,7 @@ VALUES
     (13, '2020-05-07', '2020-07-05'),
     (14, '2020-05-07', '2020-07-05'),
     (15, '2020-05-07', '2020-07-05'),
+    (16, '2020-05-07', '2020-07-05'),
     (17, '2020-05-07', '2020-07-05'),
     (18, '2020-05-07', '2020-07-05'),
     (19, '2020-05-07', '2020-07-05'),
