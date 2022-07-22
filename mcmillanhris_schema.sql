@@ -1,3 +1,9 @@
+SET NAMES utf8mb4;
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+
+
 DROP SCHEMA IF EXISTS mcmillanhris;
 CREATE SCHEMA mcmillanhris;
 USE mcmillanhris;
@@ -30,7 +36,7 @@ emplid INT UNSIGNED NOT NULL,
 required BOOLEAN,
 rate DOUBLE NOT NULL,
 PRIMARY KEY  (statetaxid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -43,7 +49,7 @@ emplid INT UNSIGNED NOT NULL,
 bracket VARCHAR(10) NOT NULL,
 rate DOUBLE NOT NULL,
 PRIMARY KEY  (fedtaxid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -60,7 +66,7 @@ totalovertime INT NOT NULL,
 grosspay DOUBLE NOT NULL,
 period DATE,
 PRIMARY KEY  (payid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -79,7 +85,7 @@ pension DOUBLE NOT NULL,
 ira VARCHAR(45) NOT NULL,
 maternityleave VARCHAR(45) NOT NULL,
 PRIMARY KEY  (benid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table 'location'
@@ -100,7 +106,7 @@ CREATE TABLE departments(
     title VARCHAR (45) NOT NULL,
     employeecount INT NOT NULL,
     PRIMARY KEY (depid),
-    FOREIGN KEY (locid) REFERENCES location(locid)
+    FOREIGN KEY (locid) REFERENCES location(locid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table 'job'
@@ -113,8 +119,8 @@ CREATE TABLE job(
     started DATE,
     ended DATE,
     PRIMARY KEY(jobid),
-    FOREIGN KEY (emplid) REFERENCES employee(emplid),
-    FOREIGN KEY (depid) REFERENCES departments(depid)
+    FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE,
+    FOREIGN KEY (depid) REFERENCES departments(depid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `certifications`
@@ -125,7 +131,7 @@ emplid INT UNSIGNED NOT NULL,
 cert_type VARCHAR (100) NOT NULL,
 experation DATE,
 PRIMARY KEY (certid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `training`
@@ -136,7 +142,7 @@ emplid INT UNSIGNED NOT NULL,
 training_type VARCHAR (100) NOT NULL,
 date_completed DATE,
 PRIMARY KEY (trainid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `qualifications`
@@ -148,7 +154,7 @@ qual_type VARCHAR (100) NOT NULL,
 institution VARCHAR(50) NOT NULL,
 qual_year DATE,
 PRIMARY KEY (qualid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `applicant tracking`
@@ -159,7 +165,7 @@ emplid INT UNSIGNED NOT NULL,
 date_applied DATE,
 date_hired DATE,
 PRIMARY KEY (appid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table 'application stage'
@@ -173,7 +179,7 @@ ended DATE,
 interview_notes VARCHAR (50) NOT NULL,
 passed BOOLEAN,
 PRIMARY KEY  (appstageid),
-FOREIGN KEY (appid) REFERENCES applicant_tracking(appid)
+FOREIGN KEY (appid) REFERENCES applicant_tracking(appid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table 'Evaluation'
@@ -190,5 +196,9 @@ evaluator VARCHAR (50) NOT NULL,
 date_written DATE,
 comments VARCHAR (50) NOT NULL,
 PRIMARY KEY (evalid),
-FOREIGN KEY (emplid) REFERENCES employee(emplid)
+CONSTRAINT FOREIGN KEY (emplid) REFERENCES employee(emplid) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
