@@ -1,11 +1,85 @@
 package com;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
 public class MainMenu {
+
+    // helper method to test whether user input can be parsed as an integer
+    static Integer integerParser(){
+
+        Scanner keyboard = new Scanner(System.in);
+
+        try {
+            int idInput = Integer.parseInt(keyboard.nextLine());
+
+            return idInput;
+
+        } catch(NumberFormatException e) {
+            System.out.println("Invalid input. \n");
+
+            return null;
+        }
+
+    }
+
+    // deletes records from the database and returns a string message with the number of rows deleted
+    static String recordDeleter(int id, String table, Connection conn){
+
+        String sql = "DELETE FROM " + table + " WHERE emplid = " + id;
+
+        try (Statement stmt = conn.createStatement()) {
+            int updated = stmt.executeUpdate(sql);
+
+            if (updated >= 1){
+                String output = updated + " record(s) deleted.";
+                return output;
+            }
+            else{
+                return "No records found matching that ID.";
+            }
+        } catch (SQLException e) {
+            return e.getMessage();
+        }
+    }
+
+    // prints a record to the console display given a table with a primary key
+    // maybe it should return the result set instead of being a printer?
+    static void recordPrinter(int id, String table, String pkColumnName, Connection conn){
+
+        String sql = "SELECT * FROM " + table + " WHERE " + pkColumnName + " = " + id;
+
+        try (Statement stmt = conn.createStatement()) {
+
+            ResultSet resultSet = stmt.executeQuery(sql);
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+
+            int columnsNumber = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnsNumber; i++) {
+
+                    String columnValue = resultSet.getString(i);
+
+                    System.out.println(metaData.getColumnName(i) + ": " + columnValue);
+                }
+                System.out.println("\n");
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // updates a record with new values input for each column
+    static void recordUpdater(int id, String table, Connection conn){
+        // get the number of columns, loop through them while assigning new values
+    }
+
+    // creates a new record on the given table
+    static void recordCreator(String table, Connection conn){
+
+    }
 
     static void mainDisplay(){
         System.out.println("Welcome to the McMillanHRIS employee management system. " +
@@ -29,21 +103,21 @@ public class MainMenu {
             input = keyboard.nextLine();
 
             if (input.equals("1")){
-                startEmployeeMenu();
+                startEmployeeMenu(conn);
                 mainDisplay();
             }
             else if (input.equals("2")) {
-                startApplicantInformationMenu();
+                startApplicantInformationMenu(conn);
                 mainDisplay();
             }
             else if (input.equals("3")){
-                startEvaluationsMenu();
+                startEvaluationsMenu(conn);
                 mainDisplay();
             }
             else if (input.equals("4")){
                 // need a condition here to enter a valid employee id before self service can begin
                 System.out.println("Welcome to the employee self service menu. Please enter the employee ID: ");
-                startSelfServiceMenu();
+                startSelfServiceMenu(conn);
                 mainDisplay();
             }
             else if (input.equals("5")){
@@ -53,7 +127,6 @@ public class MainMenu {
             else{
                 System.out.println("Invalid input. \n");
             }
-
         }
     }
 
@@ -73,46 +146,45 @@ public class MainMenu {
                 "12. Return to main menu\n");
     }
 
-    static void startEmployeeMenu(){
+    static void startEmployeeMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
 
-        employeeDisplay();
         while (running){
+            employeeDisplay();
 
             input = keyboard.nextLine();
 
             if(input.equals("1")){
-                // display all info on the employee table
+                System.out.print("Please enter the ID of the employee: ");
+
+                Integer id = integerParser();
+
+                if (id != null){
+                    recordPrinter(id, "employee", "emplid", conn);
+                }
             }
             else if (input.equals("2")){
-                startJobsMenu();
-                employeeDisplay();
+                startJobsMenu(conn);
             }
             else if (input.equals("3")){
-                startBenefitsMenu();
-                employeeDisplay();
+                startBenefitsMenu(conn);
             }
             else if (input.equals("4")){
-                startPayrollMenu();
-                employeeDisplay();
+                startPayrollMenu(conn);
             }
             else if (input.equals("5")){
-                startCertificationsMenu();
-                employeeDisplay();
+                startCertificationsMenu(conn);
             }
             else if (input.equals("6")){
-                startQualificationsMenu();
-                employeeDisplay();
+                startQualificationsMenu(conn);
             }
             else if (input.equals("7")){
-                startTrainingMenu();
-                employeeDisplay();
+                startTrainingMenu(conn);
             }
             else if (input.equals("8")){
-                startTaxInformationMenu();
-                employeeDisplay();
+                startTaxInformationMenu(conn);
             }
             else if (input.equals("9")){
 
@@ -121,7 +193,13 @@ public class MainMenu {
 
             }
             else if (input.equals("11")){
+                System.out.print("Please enter the ID of the employee to be deleted: ");
 
+                Integer id = integerParser();
+
+                if (id != null){
+                    System.out.println(recordDeleter(id, "employee", conn));
+                }
             }
             else if (input.equals("12")){
                 running = false;
@@ -144,7 +222,7 @@ public class MainMenu {
                 "7. Return to previous menu\n");
     }
 
-    static void startJobsMenu(){
+    static void startJobsMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -195,7 +273,7 @@ public class MainMenu {
                 "9. Return to previous menu\n");
     }
 
-    static void startTaxInformationMenu(){
+    static void startTaxInformationMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -249,7 +327,7 @@ public class MainMenu {
                 "6. Return to previous menu\n");
     }
 
-    static void startApplicantInformationMenu(){
+    static void startApplicantInformationMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -293,7 +371,7 @@ public class MainMenu {
                 "5. Return to previous menu\n");
     }
 
-    static void startQualificationsMenu(){
+    static void startQualificationsMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -334,7 +412,7 @@ public class MainMenu {
                 "5. Return to previous menu\n");
     }
 
-    static void startCertificationsMenu(){
+    static void startCertificationsMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -375,7 +453,7 @@ public class MainMenu {
                 "5. Return to previous menu\n");
     }
 
-    static void startTrainingMenu(){
+    static void startTrainingMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -418,7 +496,7 @@ public class MainMenu {
                 "7. Return to main menu\n");
     }
 
-    static void startPayrollMenu(){
+    static void startPayrollMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -465,7 +543,7 @@ public class MainMenu {
                 "5. Return to main menu\n");
     }
 
-    static void startBenefitsMenu(){
+    static void startBenefitsMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -508,7 +586,7 @@ public class MainMenu {
                 "7. Return to main menu\n");
     }
 
-    static void startEvaluationsMenu(){
+    static void startEvaluationsMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -561,7 +639,7 @@ public class MainMenu {
                 "11. Return to previous menu\n");
     }
 
-    static void startSelfServiceMenu(){
+    static void startSelfServiceMenu(Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -625,8 +703,9 @@ public class MainMenu {
             }
             conn.close();
         }
-        catch (SQLException ex) {
-            ex.printStackTrace();
+        catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
 
