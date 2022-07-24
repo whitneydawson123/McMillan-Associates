@@ -6,35 +6,73 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.sql.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class StatementCreatorTest {
 
-    // runs scripts to create a fresh test database
-    void sqlRunner() throws ClassNotFoundException, SQLException, FileNotFoundException {
 
-        String schemaFilePath = "C:/Scripts/mcmillanhris_schema.sql";
-        String dataFilePath = "C:/Scripts/mcmillanhris_data.sql";
+    @Test
+    void doesIntegerParserReturnNullWithNonIntegerInput() {
 
-        String dbURL = "jdbc:mysql://localhost:3306/McMillanHRIS";
-        String username = "root";
-        String password = "password";
-        try{
-            Connection conn = DriverManager.getConnection(dbURL, username, password);
+        String notAnInt = "Not an integer";
 
-            if (conn != null) {
-                ScriptRunner runner = new ScriptRunner(conn);
-                runner.runScript(new BufferedReader(new FileReader(schemaFilePath)));
-                runner.runScript(new BufferedReader(new FileReader(dataFilePath)));
-                System.out.println("Test database successfully created.");
-            }
-            conn.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        InputStream sysInBackup = System.in; // backup of System.in
+        ByteArrayInputStream in = new ByteArrayInputStream(notAnInt.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals(null, StatementCreator.integerParser());
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+    }
+
+    @Test
+    void doesIntegerParserReturnTheIntegerGivenStringWithOnlyIntegerFive() {
+
+        String stringInt = "5";
+
+        InputStream sysInBackup = System.in; // backup of System.in
+        ByteArrayInputStream in = new ByteArrayInputStream(stringInt.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals(5, StatementCreator.integerParser());
+
+        System.setIn(sysInBackup); // restore System.in using the backup
     }
 
 
+    @Test
+    void recordDeleter() {
+    }
+
+    @Test
+    void recordUpdater() {
+    }
+
+    @Test
+    void recordCreator() {
+    }
+
+    @Test
+    void canConnectToTestDatabaseAfterItsCreated() {
+        String dbURL = "jdbc:mysql://localhost:3306/McMillanHRIStest";
+        String username = "root";
+        String password = "password";
+        try {
+            StatementCreator.sqlRunner();
+
+            Connection conn = DriverManager.getConnection(dbURL, username, password);
+
+            // test passes if connection isn't null
+            if (conn != null) {
+                System.out.println("Successfully connected to test database");
+                assert(true);
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+            System.out.println("Failed connecting to database");
+            assert(false);
+        }
+    }
 }
