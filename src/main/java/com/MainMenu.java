@@ -5,82 +5,6 @@ import java.util.Scanner;
 
 public class MainMenu {
 
-    // helper method to test whether user input can be parsed as an integer
-    static Integer integerParser(){
-
-        Scanner keyboard = new Scanner(System.in);
-
-        try {
-            int idInput = Integer.parseInt(keyboard.nextLine());
-
-            return idInput;
-
-        } catch(NumberFormatException e) {
-            System.out.println("Invalid input. \n");
-
-            return null;
-        }
-
-    }
-
-    // deletes records from the database and returns a string message with the number of rows deleted
-    static String recordDeleter(int id, String table, Connection conn){
-
-        String sql = "DELETE FROM " + table + " WHERE emplid = " + id;
-
-        try (Statement stmt = conn.createStatement()) {
-            int updated = stmt.executeUpdate(sql);
-
-            if (updated >= 1){
-                String output = updated + " record(s) deleted.";
-                return output;
-            }
-            else{
-                return "No records found matching that ID.";
-            }
-        } catch (SQLException e) {
-            return e.getMessage();
-        }
-    }
-
-    // prints a record to the console display given a table with a primary key
-    // maybe it should return the result set instead of being a printer?
-    static void recordPrinter(int id, String table, String pkColumnName, Connection conn){
-
-        String sql = "SELECT * FROM " + table + " WHERE " + pkColumnName + " = " + id;
-
-        try (Statement stmt = conn.createStatement()) {
-
-            ResultSet resultSet = stmt.executeQuery(sql);
-
-            ResultSetMetaData metaData = resultSet.getMetaData();
-
-            int columnsNumber = metaData.getColumnCount();
-
-            while (resultSet.next()) {
-                for (int i = 1; i <= columnsNumber; i++) {
-
-                    String columnValue = resultSet.getString(i);
-
-                    System.out.println(metaData.getColumnName(i) + ": " + columnValue);
-                }
-                System.out.println("\n");
-            }
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // updates a record with new values input for each column
-    static void recordUpdater(int id, String table, Connection conn){
-        // get the number of columns, loop through them while assigning new values
-    }
-
-    // creates a new record on the given table
-    static void recordCreator(String table, Connection conn){
-
-    }
-
     static void mainDisplay(){
         System.out.println("Welcome to the McMillanHRIS employee management system. " +
                 "Enter the corresponding number key to select an option.\n\n" +
@@ -159,11 +83,9 @@ public class MainMenu {
             if(input.equals("1")){
                 System.out.print("Please enter the ID of the employee: ");
 
-                Integer id = integerParser();
+                Integer id = StatementCreator.integerParser();
 
-                if (id != null){
-                    recordPrinter(id, "employee", "emplid", conn);
-                }
+                if (id != null) StatementCreator.columnsToStrings(id, "employee", "emplid", conn);
             }
             else if (input.equals("2")){
                 startJobsMenu(conn);
@@ -187,7 +109,11 @@ public class MainMenu {
                 startTaxInformationMenu(conn);
             }
             else if (input.equals("9")){
+                System.out.print("Please enter the ID of the employee to be updated: ");
 
+                Integer id = StatementCreator.integerParser();
+
+                if (id != null) StatementCreator.recordUpdater(id, "employee", "emplid", conn);
             }
             else if (input.equals("10")){
 
@@ -195,11 +121,12 @@ public class MainMenu {
             else if (input.equals("11")){
                 System.out.print("Please enter the ID of the employee to be deleted: ");
 
-                Integer id = integerParser();
+                Integer id = StatementCreator.integerParser();
 
-                if (id != null){
-                    System.out.println(recordDeleter(id, "employee", conn));
+                if (id != null) {
+                    System.out.println(StatementCreator.recordDeleter(id, "employee", "emplid", conn));
                 }
+
             }
             else if (input.equals("12")){
                 running = false;
