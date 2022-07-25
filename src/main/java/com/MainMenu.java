@@ -83,9 +83,12 @@ public class MainMenu {
             if(input.equals("1")){
                 System.out.print("Please enter the ID of the employee: ");
 
-                Integer id = StatementCreator.integerParser();
+                String id = StatementCreator.integerValidator();
 
-                if (id != null) StatementCreator.columnsToStrings(id, "employee", "emplid", conn);
+                if (!id.equals("")) {
+                    String[] lines = StatementCreator.createReadableColumns(id, "employee", "emplid", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
             }
             else if (input.equals("2")){
                 startJobsMenu(conn);
@@ -111,19 +114,21 @@ public class MainMenu {
             else if (input.equals("9")){
                 System.out.print("Please enter the ID of the employee to be updated: ");
 
-                Integer id = StatementCreator.integerParser();
+                String id = StatementCreator.integerValidator();
 
-                if (id != null) StatementCreator.recordUpdater(id, "employee", "emplid", conn);
+                if (!id.equals(""))  StatementCreator.recordUpdater(id, "employee", "emplid", conn);
             }
             else if (input.equals("10")){
+
+                StatementCreator.recordInserter("employee", conn);
 
             }
             else if (input.equals("11")){
                 System.out.print("Please enter the ID of the employee to be deleted: ");
 
-                Integer id = StatementCreator.integerParser();
+                String id = StatementCreator.integerValidator();
 
-                if (id != null) {
+                if (!id.equals("")) {
                     System.out.println(StatementCreator.recordDeleter(id, "employee", "emplid", conn));
                 }
 
@@ -627,8 +632,8 @@ public class MainMenu {
             if (conn != null) {
                 System.out.println("Connected to McMillanHRIS");
                 startMainMenu(conn);
+                conn.close();
             }
-            conn.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
