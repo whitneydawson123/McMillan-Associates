@@ -33,9 +33,16 @@ public class MainMenu {
                 case "2" -> startApplicantInformationMenu(conn);
                 case "3" ->  startEvaluationsMenu(conn);
                 case "4" -> {
-                    // need a condition here to enter a valid employee id before self-service can begin
                     System.out.println("Welcome to the employee self service menu. Please enter the employee ID: ");
-                    startSelfServiceMenu(conn);
+                    String id = StatementCreator.integerValidator(); // validates that the input is an integer
+
+                    // validates that the ID is both an integer and exists on the database
+                    if (!id.equals("")
+                            && !StatementCreator.createReadableColumns(
+                                    id, "employee", "employee_id", conn)[0].isBlank()) {
+                        startSelfServiceMenu(id, conn);
+                    }
+                    else System.out.println("Invalid ID");
                 }
                 case "5" -> {
                     System.out.println("Goodbye.");
@@ -172,9 +179,16 @@ public class MainMenu {
                         StatementCreator.recordPrinter(lines);
                     }
                 }
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
-                case "5" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder for manager filter");
+                case "4" -> {
+                    System.out.print("Please enter the ID of the job to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "job", "job_id", conn);
+                }
+                case "5" -> StatementCreator.recordInserter("job", conn);
                 case "6" -> {
                     System.out.print("Please enter the ID of the employee to be deleted: ");
 
@@ -222,14 +236,68 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> taxInformationDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
-                case "5" -> System.out.println("placeholder");
-                case "6" -> System.out.println("placeholder");
-                case "7" -> System.out.println("placeholder");
-                case "8" -> System.out.println("placeholder");
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "federal_tax", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the ID of the federal tax record to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "federal_tax", "federal_tax_id", conn);
+                }
+                case "3" -> StatementCreator.recordInserter("federal_tax", conn);
+                case "4" -> {
+                    System.out.print("Please enter the ID of the federal tax record to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "federal_tax", "federal_tax_id", conn));
+                    }
+
+                }
+                case "5" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "state_tax", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "6" -> {
+                    System.out.print("Please enter the ID of the state tax record to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "state_tax", "state_tax_id", conn);
+                }
+                case "7" -> StatementCreator.recordInserter("state_tax", conn);
+                case "8" -> {
+                    System.out.print("Please enter the ID of the state tax record to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "state_tax", "state_tax_id", conn));
+                    }
+
+                }
                 case "9" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
@@ -263,12 +331,151 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> applicantInformationDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
-                case "5" -> System.out.println("placeholder");
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "applicant_tracking", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the ID of the applicant to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "applicant_tracking", "applicant_id", conn);
+                }
+                case "3" -> StatementCreator.recordInserter("applicant_tracking", conn);
+                case "4" -> {
+                    System.out.print("Please enter the ID of the applicant to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "applicant_tracking", "applicant_id", conn));
+                    }
+
+                }
+                case "5" -> startApplicantStageMenu(conn);
                 case "6" -> running = false;
+                default -> System.out.println("Invalid input. \n");
+            }
+
+        }
+    }
+
+    static void applicantStageDisplay() {
+        System.out.println("""
+                This is the applicant stage menu. Enter the corresponding number to select an option
+                                
+                1. Filter applicant stages by id
+                2. Filter applicant stages by applicant id
+                3. Filter applicant stages by stage
+                4. Filter applicant stages by start date
+                5. Filter applicant stages by end date
+                6. Edit application stage record
+                7. Create application stage record
+                8. Delete application stage record
+                9. Previous menu
+                """);
+    }
+
+    static void startApplicantStageMenu(Connection conn){
+        String input;
+        Scanner keyboard = new Scanner(System.in);
+        boolean running = true;
+
+        applicantStageDisplay();
+        while (running){
+            System.out.println("Enter 0 if you wish to see the applicant information menu options again.");
+
+            input = keyboard.nextLine();
+
+            switch (input) {
+                case "0" -> applicantStageDisplay();
+                case "1" -> {
+                    System.out.print("Please enter the ID of the application stage record: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "application_stage", "application_stage_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the employee ID of the applicant: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "applicant_tracking", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "3" -> {
+                    System.out.print("Please enter the stage of the application stage record: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "applicant_tracking", "application_stage", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "4" -> {
+                    System.out.print("Please enter the start date of the application stage record: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "applicant_tracking", "started", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "5" -> {
+                    System.out.print("Please enter the end date of the application stage record: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "applicant_tracking", "ended", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "6" ->
+                {
+                    System.out.print("Please enter the ID of the application stage to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "application_stage", "application_stage_id", conn);
+                }
+                case "7" -> StatementCreator.recordInserter("application_stage", conn);
+                case "8" -> {
+                    System.out.print("Please enter the ID of the application stage to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "application_stage", "application_stage_id", conn));
+                    }
+
+                }
+                case "9" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
 
@@ -300,10 +507,37 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> qualificationsDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "qualification", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the ID of the qualification to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "qualification", "qualification_id", conn);
+                }
+                case "3" -> StatementCreator.recordInserter("qualification", conn);
+                case "4" -> {
+                    System.out.print("Please enter the ID of the qualification to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "qualification", "qualification_id", conn));
+                    }
+
+                }
                 case "5" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
@@ -336,10 +570,37 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> certificationsDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "certification", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the ID of the certification to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "certification", "certification_id", conn);
+                }
+                case "3" -> StatementCreator.recordInserter("certification", conn);
+                case "4" -> {
+                    System.out.print("Please enter the ID of the certification to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "certification", "certification_id", conn));
+                    }
+
+                }
                 case "5" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
@@ -371,10 +632,37 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> trainingDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "training", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the ID of the training record to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "training", "training_id", conn);
+                }
+                case "3" -> StatementCreator.recordInserter("training", conn);
+                case "4" -> {
+                    System.out.print("Please enter the ID of the training record to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "training", "training_id", conn));
+                    }
+
+                }
                 case "5" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
@@ -386,9 +674,9 @@ public class MainMenu {
         System.out.println("""
                 This is the payroll information menu. Enter the corresponding number to select an option.
 
-                1. Filter by pay id
-                2. Filter by employee id
-                3. Filter by payroll period date(mm/dd/yy)
+                1. Filter by employee ID
+                2. Filter by payroll ID
+                3. Filter by payroll period date(YYYY-MM-DD)
                 4. Edit payroll by id
                 5. Create new payroll
                 6. Delete payroll
@@ -409,10 +697,59 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> payrollDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "payroll", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the payroll ID: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "payroll", "payroll_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "3" -> {
+                    System.out.print("Please enter the payroll period date(YYYY-MM-DD): ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "payroll", "period", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "4" -> {
+                    System.out.print("Please enter the ID of the training record to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "payroll", "payroll_id", conn);
+                }
+                case "5" -> StatementCreator.recordInserter("payroll", conn);
+                case "6" -> {
+                    System.out.print("Please enter the ID of the training record to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "payroll", "payroll_id", conn));
+                    }
+
+                }
                 case "7" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
@@ -445,10 +782,37 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> benefitsDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "benefit", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the ID of the benefits record to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "benefit", "benefit_id", conn);
+                }
+                case "3" -> StatementCreator.recordInserter("benefit", conn);
+                case "4" -> {
+                    System.out.print("Please enter the ID of the benefits record to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "benefit", "benefit_id", conn));
+                    }
+
+                }
                 case "5" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
@@ -462,7 +826,7 @@ public class MainMenu {
 
                 1. Filter by employee id
                 2. Filter by evaluator name
-                3. Filter by the date of report(mm/dd/yy)
+                3. Filter by the date of report(YYYY-MM-DD)
                 4. Edit evaluation
                 5. Create evaluation
                 6. Delete evaluation
@@ -483,11 +847,60 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> evaluationsDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
-                case "5" -> running = false;
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "evaluation", "evaluation_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the evaluator name to search: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "evaluation", "evaluator", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "3" -> {
+                    System.out.print("Please enter the date of report(YYYY-MM-DD): ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "evaluation", "date_written", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "4" -> {
+                    System.out.print("Please enter the ID of the evaluation record to be updated: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "evaluation", "evaluation_id", conn);
+                }
+                case "5" -> StatementCreator.recordInserter("evaluation", conn);
+                case "6" -> {
+                    System.out.print("Please enter the ID of the evaluation record to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "evaluation", "evaluation_id", conn));
+                    }
+
+                }
+                case "7" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
 
@@ -498,21 +911,22 @@ public class MainMenu {
         System.out.println("""
                 This is the employee self service menu. Enter the corresponding number to select an option.
 
-                1. Update address
-                2. Update city
-                3. Update state
-                4. Update zip
-                5. Update email
-                6. Update phone
-                7. View benefits
-                8. View payroll
-                9. Qualifications
-                10. Certifications
-                11. Return to previous menu
+                1. View basic information
+                2. Update address
+                3. Update city
+                4. Update state
+                5. Update zip
+                6. Update email
+                7. Update phone
+                8. View benefits
+                9. View payroll
+                10. View qualifications
+                11. View certifications
+                12. Return to previous menu
                 """);
     }
 
-    static void startSelfServiceMenu(Connection conn){
+    static void startSelfServiceMenu(String id, Connection conn){
         String input;
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
@@ -525,13 +939,38 @@ public class MainMenu {
 
             switch (input) {
                 case "0" -> selfServiceDisplay();
-                case "1" -> System.out.println("placeholder");
-                case "2" -> System.out.println("placeholder");
-                case "3" -> System.out.println("placeholder");
-                case "4" -> System.out.println("placeholder");
-                case "9" -> System.out.println("placeholder"); // should be an overload that takes the already entered ID
-                case "10" -> System.out.println("placeholder"); // should be an overload that takes the already entered ID
-                case "11" -> running = false;
+                case "1" -> {
+                    String[] lines = StatementCreator.createReadableColumns(
+                            id, "employee", "employee_id", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
+                case "2" -> StatementCreator.employeeColumnUpdater(id, "address", conn);
+                case "3" -> StatementCreator.employeeColumnUpdater(id, "city", conn);
+                case "4" -> StatementCreator.employeeColumnUpdater(id, "state", conn);
+                case "5" -> StatementCreator.employeeColumnUpdater(id, "zip", conn);
+                case "6" -> StatementCreator.employeeColumnUpdater(id, "email", conn);
+                case "7" -> StatementCreator.employeeColumnUpdater(id, "phone", conn);
+                case "8" -> {
+                    String[] lines = StatementCreator.createReadableColumns(
+                            id, "benefit", "employee_id", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
+                case "9" -> {
+                    String[] lines = StatementCreator.createReadableColumns(
+                            id, "payroll", "employee_id", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
+                case "10" -> {
+                    String[] lines = StatementCreator.createReadableColumns(
+                            id, "qualification", "employee_id", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
+                case "11" -> {
+                    String[] lines = StatementCreator.createReadableColumns(
+                            id, "certification", "employee_id", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
+                case "12" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
 

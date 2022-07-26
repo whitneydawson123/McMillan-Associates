@@ -123,9 +123,9 @@ public final class StatementCreator {
 
 
     // adds each read column as a string in the array in the format "column name: column value"
-    static String[] createReadableColumns(String id, String table, String pkColumnName, Connection conn){
+    static String[] createReadableColumns(String id, String table, String identifyingColumn, Connection conn){
 
-        String sql = "SELECT * FROM " + table + " WHERE " + pkColumnName + " = " + id;
+        String sql = "SELECT * FROM " + table + " WHERE " + identifyingColumn + " = " + id;
 
         try (Statement stmt = conn.createStatement()) {
 
@@ -144,10 +144,8 @@ public final class StatementCreator {
 
                     record[i-1] = metaData.getColumnName(i) + ": " + columnValue;
                 }
+                return record;
             }
-
-            return record;
-
         }catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
@@ -155,6 +153,11 @@ public final class StatementCreator {
             emptyRecord[0] = "";
             return emptyRecord;
         }
+
+        // an empty record is returned if there were no results
+        String[] emptyRecord = new String[1];
+        emptyRecord[0] = "";
+        return emptyRecord;
     }
 
 
@@ -311,6 +314,53 @@ public final class StatementCreator {
         }catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // updates a single column of the employee table, returning the number of records altered
+    static int employeeColumnUpdater(String id, String columnName, Connection conn){
+
+        String select = "SELECT * FROM  employee WHERE " + columnName + " = " + id;
+        StringBuilder update = new StringBuilder("UPDATE employee SET ");
+        String where = " WHERE employee_id = " + id;
+
+        try (Statement stmt = conn.createStatement()) {
+
+            ResultSet resultSet = stmt.executeQuery(select);
+
+            // get the column number of the column being updated.
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+
+            // get the number of columns to loop through them while assigning new values
+            int numberOfColumns = metaData.getColumnCount();
+
+            // records the number of valid values entered by the user
+            int valuesEntered = 0;
+
+            // start at 2, because the primary key cannot be changed
+            for (int i = 2; i <= numberOfColumns; i++) {
+                    if (columnName.equals(metaData.getColumnName(i))){
+                        update.append(validateUpdateLine(i, resultSet));
+                        valuesEntered++;
+                    }
+            }
+
+            if (valuesEntered == 0){
+                System.out.println("\nNo alterations made");
+                return 0;
+            }
+
+            // remove trailing comma and append the WHERE
+            if (update.charAt(update.length() - 2) == ',') update.deleteCharAt(update.length() - 2);
+            update.append(where);
+
+            System.out.println("\nRecord altered");
+            int output = stmt.executeUpdate(update.toString());
+            return output;
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     // returns a valid String to be added to the INSERT statement
