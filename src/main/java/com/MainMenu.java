@@ -6,13 +6,15 @@ import java.util.Scanner;
 public class MainMenu {
 
     static void mainDisplay(){
-        System.out.println("Welcome to the McMillanHRIS employee management system. " +
-                "Enter the corresponding number key to select an option.\n\n" +
-                "1. Employee information\n" +
-                "2. Applicant information\n" +
-                "3. Evaluations\n" +
-                "4. Employee self service\n" +
-                "5. Exit system\n");
+        System.out.println("""
+                Welcome to the McMillanHRIS employee management system. Enter the corresponding number key to select an option.
+
+                1. Employee information
+                2. Applicant information
+                3. Evaluations
+                4. Employee self service
+                5. Exit system
+                """);
     }
 
     static void startMainMenu(Connection conn){
@@ -20,54 +22,47 @@ public class MainMenu {
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
 
-        mainDisplay();
-        while (running){
 
+        while (running){
+            mainDisplay();
 
             input = keyboard.nextLine();
 
-            if (input.equals("1")){
-                startEmployeeMenu(conn);
-                mainDisplay();
-            }
-            else if (input.equals("2")) {
-                startApplicantInformationMenu(conn);
-                mainDisplay();
-            }
-            else if (input.equals("3")){
-                startEvaluationsMenu(conn);
-                mainDisplay();
-            }
-            else if (input.equals("4")){
-                // need a condition here to enter a valid employee id before self service can begin
-                System.out.println("Welcome to the employee self service menu. Please enter the employee ID: ");
-                startSelfServiceMenu(conn);
-                mainDisplay();
-            }
-            else if (input.equals("5")){
-                System.out.println("Goodbye.");
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "1" -> startEmployeeMenu(conn);
+                case "2" -> startApplicantInformationMenu(conn);
+                case "3" ->  startEvaluationsMenu(conn);
+                case "4" -> {
+                    // need a condition here to enter a valid employee id before self-service can begin
+                    System.out.println("Welcome to the employee self service menu. Please enter the employee ID: ");
+                    startSelfServiceMenu(conn);
+                }
+                case "5" -> {
+                    System.out.println("Goodbye.");
+                    running = false;
+                }
+                default -> System.out.println("Invalid input. \n");
             }
         }
     }
 
     static void employeeDisplay() {
-        System.out.println("This is the employee information menu. Enter the corresponding number to select an option.\n\n" +
-                "1. Basic information\n" +
-                "2. Jobs and positions\n" +
-                "3. Benefits\n" +
-                "4. Payroll\n" +
-                "5. Certifications \n" +
-                "6. Qualifications \n" +
-                "7. Training\n" +
-                "8. Tax information menu\n" +
-                "9. Edit employee basic information\n" +
-                "10. Create new employee\n" +
-                "11. Delete employee\n" +
-                "12. Return to main menu\n");
+        System.out.println("""
+                This is the employee information menu. Enter the corresponding number to select an option.
+
+                1. Basic information
+                2. Jobs and positions
+                3. Benefits
+                4. Payroll
+                5. Certifications\s
+                6. Qualifications\s
+                7. Training
+                8. Tax information menu
+                9. Edit employee basic information
+                10. Create new employee
+                11. Delete employee
+                12. Return to main menu
+                """);
     }
 
     static void startEmployeeMenu(Connection conn){
@@ -75,83 +70,71 @@ public class MainMenu {
         Scanner keyboard = new Scanner(System.in);
         boolean running = true;
 
+        employeeDisplay();
         while (running){
-            employeeDisplay();
+            System.out.println("Enter 0 if you wish to see the employee information menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-                System.out.print("Please enter the ID of the employee: ");
+            switch (input) {
+                case "0" -> employeeDisplay();
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
 
-                String id = StatementCreator.integerValidator();
+                    String id = StatementCreator.integerValidator();
 
-                if (!id.equals("")) {
-                    String[] lines = StatementCreator.createReadableColumns(id, "employee", "emplid", conn);
-                    StatementCreator.recordPrinter(lines);
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "employee", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
                 }
-            }
-            else if (input.equals("2")){
-                startJobsMenu(conn);
-            }
-            else if (input.equals("3")){
-                startBenefitsMenu(conn);
-            }
-            else if (input.equals("4")){
-                startPayrollMenu(conn);
-            }
-            else if (input.equals("5")){
-                startCertificationsMenu(conn);
-            }
-            else if (input.equals("6")){
-                startQualificationsMenu(conn);
-            }
-            else if (input.equals("7")){
-                startTrainingMenu(conn);
-            }
-            else if (input.equals("8")){
-                startTaxInformationMenu(conn);
-            }
-            else if (input.equals("9")){
-                System.out.print("Please enter the ID of the employee to be updated: ");
+                case "2" -> startJobsMenu(conn);
+                case "3" -> startBenefitsMenu(conn);
+                case "4" -> startPayrollMenu(conn);
+                case "5" -> startCertificationsMenu(conn);
+                case "6" -> startQualificationsMenu(conn);
+                case "7" -> startTrainingMenu(conn);
+                case "8" -> startTaxInformationMenu(conn);
+                case "9" -> {
+                    System.out.print("Please enter the ID of the employee to be updated: ");
 
-                String id = StatementCreator.integerValidator();
+                    String id = StatementCreator.integerValidator();
 
-                if (!id.equals(""))  StatementCreator.recordUpdater(id, "employee", "emplid", conn);
-            }
-            else if (input.equals("10")){
-
-                StatementCreator.recordInserter("employee", conn);
-
-            }
-            else if (input.equals("11")){
-                System.out.print("Please enter the ID of the employee to be deleted: ");
-
-                String id = StatementCreator.integerValidator();
-
-                if (!id.equals("")) {
-                    System.out.println(StatementCreator.recordDeleter(id, "employee", "emplid", conn));
+                    if (!id.equals("")) StatementCreator.recordUpdater(
+                            id, "employee", "employee_id", conn);
                 }
+                case "10" -> StatementCreator.recordInserter("employee", conn);
+                case "11" -> {
+                    System.out.print("Please enter the ID of the employee to be deleted: ");
 
-            }
-            else if (input.equals("12")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "employee", "employee_id", conn));
+                    }
+
+                }
+                case "12" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void jobsDisplay() {
-        System.out.println("Welcome to the jobs and positions menu. Enter the corresponding number to select an option\n\n" +
-                "1. View jobs by employee id\n" +
-                "2. View jobs by department id\n" +
-                "3. Filter by managers\n" +
-                "4. Edit job\n" +
-                "5. Create job\n" +
-                "6. Delete job\n" +
-                "7. Return to previous menu\n");
+        System.out.println("""
+                Welcome to the jobs and positions menu. Enter the corresponding number to select an option
+
+                1. View jobs by employee id
+                2. View jobs by department id
+                3. Filter by managers
+                4. Edit job
+                5. Create job
+                6. Delete job
+                7. Return to previous menu
+                """);
     }
 
     static void startJobsMenu(Connection conn){
@@ -161,48 +144,69 @@ public class MainMenu {
 
         jobsDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the jobs and positions menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-                // group job records by employee id
-            }
-            else if (input.equals("2")){
-                // group job records by department id
-            }
-            else if (input.equals("3")){
-                // only jobs that start with 'Manager'
-            }
-            else if (input.equals("4")){
-                // edit a job record
-            }
-            else if (input.equals("5")){
-                // create a job record
-            }
-            else if (input.equals("6")){
-                // delete a job record
-            }
-            else if (input.equals("7")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> jobsDisplay();
+                case "1" -> {
+                    System.out.print("Please enter the ID of the employee: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "job", "employee_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "2" -> {
+                    System.out.print("Please enter the ID of the department: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "job", "departments_id", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> System.out.println("placeholder");
+                case "6" -> {
+                    System.out.print("Please enter the ID of the employee to be deleted: ");
+
+                    String id = StatementCreator.integerValidator();
+
+                    if (!id.equals("")) {
+                        System.out.println(StatementCreator.recordDeleter(
+                                id, "job", "job_id", conn));
+                    }
+
+                }
+                case "7" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void taxInformationDisplay() {
-        System.out.println("Welcome to the tax information menu. Enter the corresponding number to select an option\n\n" +
-                "1. View federal tax record of an employee\n" +
-                "2. Edit federal tax record of an employee\n" +
-                "3. Create federal tax record of an employee\n" +
-                "4. Delete federal tax record of an employee\n" +
-                "5. View state tax record of an employee\n" +
-                "6. Edit state tax record of an employee\n" +
-                "7. Create state tax record of an employee\n" +
-                "8. Delete state tax record of an employee\n" +
-                "9. Return to previous menu\n");
+        System.out.println("""
+                Welcome to the tax information menu. Enter the corresponding number to select an option
+
+                1. View federal tax record of an employee
+                2. Edit federal tax record of an employee
+                3. Create federal tax record of an employee
+                4. Delete federal tax record of an employee
+                5. View state tax record of an employee
+                6. Edit state tax record of an employee
+                7. Create state tax record of an employee
+                8. Delete state tax record of an employee
+                9. Return to previous menu
+                """);
     }
 
     static void startTaxInformationMenu(Connection conn){
@@ -212,51 +216,38 @@ public class MainMenu {
 
         taxInformationDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the tax information menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-                // display fed tax record associated with employee id
-            }
-            else if (input.equals("2")){
-                // edit a fed tax record
-            }
-            else if (input.equals("3")){
-                // create new fed tax record associated with an employee id that doesn't already have one
-            }
-            else if (input.equals("4")){
-                // delete fed tax record associated with employee id
-            }
-            else if (input.equals("5")){
-                // display state tax record associated with employee id
-            }
-            else if (input.equals("6")){
-                // edit a state tax record
-            }
-            else if (input.equals("7")){
-                // create new state tax record associated with an employee id
-            }
-            else if (input.equals("8")){
-                // delete a state tax record
-            }
-            else if (input.equals("9")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> taxInformationDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> System.out.println("placeholder");
+                case "6" -> System.out.println("placeholder");
+                case "7" -> System.out.println("placeholder");
+                case "8" -> System.out.println("placeholder");
+                case "9" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void applicantInformationDisplay() {
-        System.out.println("This is the applicant information menu. Enter the corresponding number to select an option\n\n" +
-                "1. View basic applicant info\n" +
-                "2. Edit applicant info\n" +
-                "3. Delete applicant\n" +
-                "4. Create applicant\n" +
-                "5. Applicant stage menu\n" +
-                "6. Return to previous menu\n");
+        System.out.println("""
+                This is the applicant information menu. Enter the corresponding number to select an option
+
+                1. View basic applicant info
+                2. Edit applicant info
+                3. Delete applicant
+                4. Create applicant
+                5. Applicant stage menu
+                6. Return to previous menu
+                """);
     }
 
     static void startApplicantInformationMenu(Connection conn){
@@ -266,41 +257,34 @@ public class MainMenu {
 
         applicantInformationDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the applicant information menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-
-            }
-            else if (input.equals("6")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> applicantInformationDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> System.out.println("placeholder");
+                case "6" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void qualificationsDisplay() {
-        System.out.println("This is the qualifications menu. Enter the corresponding number to select an option\n" +
-                "1. View qualifications\n" +
-                "2. Edit qualification\n" +
-                "3. Add qualification\n" +
-                "4. Delete qualification\n" +
-                "5. Return to previous menu\n");
+        System.out.println("""
+                This is the qualifications menu. Enter the corresponding number to select an option
+                
+                1. View qualifications
+                2. Edit qualification
+                3. Add qualification
+                4. Delete qualification
+                5. Return to previous menu
+                """);
     }
 
     static void startQualificationsMenu(Connection conn){
@@ -310,38 +294,33 @@ public class MainMenu {
 
         qualificationsDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the qualifications menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> qualificationsDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void certificationsDisplay() {
-        System.out.println("This is the certifications menu. Enter the corresponding number to select an option\n" +
-                "1. View certifications\n" +
-                "2. Edit certification\n" +
-                "3. Add certification\n" +
-                "4. Delete certification\n" +
-                "5. Return to previous menu\n");
+        System.out.println("""
+                This is the certifications menu. Enter the corresponding number to select an option
+                
+                1. View certifications
+                2. Edit certification
+                3. Add certification
+                4. Delete certification
+                5. Return to previous menu
+                """);
     }
 
     static void startCertificationsMenu(Connection conn){
@@ -351,38 +330,32 @@ public class MainMenu {
 
         certificationsDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the certifications menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> certificationsDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void trainingDisplay() {
-        System.out.println("This is the training menu. Enter the corresponding number to select an option\n" +
-                "1. View training record\n" +
-                "2. Edit training record \n" +
-                "3. Add training record\n" +
-                "4. Delete training record\n" +
-                "5. Return to previous menu\n");
+        System.out.println("""
+                This is the training menu. Enter the corresponding number to select an option
+                1. View training record
+                2. Edit training record\s
+                3. Add training record
+                4. Delete training record
+                5. Return to previous menu
+                """);
     }
 
     static void startTrainingMenu(Connection conn){
@@ -392,40 +365,35 @@ public class MainMenu {
 
         trainingDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the training menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> trainingDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void payrollDisplay() {
-        System.out.println("This is the payroll information menu. Enter the corresponding number to select an option.\n\n" +
-                "1. Filter by pay id\n" +
-                "2. Filter by employee id\n" +
-                "3. Filter by payroll period date(mm/dd/yy)\n" +
-                "4. Edit payroll by id\n" +
-                "5. Create new payroll\n" +
-                "6. Delete payroll\n" +
-                "7. Return to main menu\n");
+        System.out.println("""
+                This is the payroll information menu. Enter the corresponding number to select an option.
+
+                1. Filter by pay id
+                2. Filter by employee id
+                3. Filter by payroll period date(mm/dd/yy)
+                4. Edit payroll by id
+                5. Create new payroll
+                6. Delete payroll
+                7. Return to main menu
+                """);
     }
 
     static void startPayrollMenu(Connection conn){
@@ -435,44 +403,33 @@ public class MainMenu {
 
         payrollDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the payroll information menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-
-            }
-            else if (input.equals("6")){
-
-            }
-            else if (input.equals("7")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> payrollDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "7" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void benefitsDisplay() {
-        System.out.println("This is the benefits menu. Enter the corresponding number to select an option.\n\n" +
-                "1. View benefits of an employee\n" +
-                "2. Edit benefits of an employee\n" +
-                "3. Create benefits record for an employee\n" +
-                "4. Delete benefits record of employee\n" +
-                "5. Return to main menu\n");
+        System.out.println("""
+                This is the benefits menu. Enter the corresponding number to select an option.
+
+                1. View benefits of an employee
+                2. Edit benefits of an employee
+                3. Create benefits record for an employee
+                4. Delete benefits record of employee
+                5. Return to main menu
+                """);
     }
 
     static void startBenefitsMenu(Connection conn){
@@ -482,40 +439,35 @@ public class MainMenu {
 
         benefitsDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the benefits menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> benefitsDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void evaluationsDisplay() {
-        System.out.println("This is the evaluations menu. Enter the corresponding number to select an option.\n\n" +
-                "1. Filter by employee id\n" +
-                "2. Filter by evaluator name\n" +
-                "3. Filter by the date of report(mm/dd/yy)\n" +
-                "4. Edit evaluation\n" +
-                "5. Create evaluation\n" +
-                "6. Delete evaluation\n" +
-                "7. Return to main menu\n");
+        System.out.println("""
+                This is the evaluations menu. Enter the corresponding number to select an option.
+
+                1. Filter by employee id
+                2. Filter by evaluator name
+                3. Filter by the date of report(mm/dd/yy)
+                4. Edit evaluation
+                5. Create evaluation
+                6. Delete evaluation
+                7. Return to main menu
+                """);
     }
 
     static void startEvaluationsMenu(Connection conn){
@@ -525,50 +477,39 @@ public class MainMenu {
 
         evaluationsDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the evaluations menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-
-            }
-            else if (input.equals("6")){
-
-            }
-            else if (input.equals("7")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> evaluationsDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "5" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
 
     static void selfServiceDisplay() {
-        System.out.println("This is the employee self service menu. Enter the corresponding number to select an option.\n\n" +
-                "1. Update address\n" +
-                "2. Update city\n" +
-                "3. Update state\n" +
-                "4. Update zip\n" +
-                "5. Update email\n" +
-                "6. Update phone\n" +
-                "7. View benefits\n" +
-                "8. View payroll\n" +
-                "9. Qualifications\n" +
-                "10. Certifications\n" +
-                "11. Return to previous menu\n");
+        System.out.println("""
+                This is the employee self service menu. Enter the corresponding number to select an option.
+
+                1. Update address
+                2. Update city
+                3. Update state
+                4. Update zip
+                5. Update email
+                6. Update phone
+                7. View benefits
+                8. View payroll
+                9. Qualifications
+                10. Certifications
+                11. Return to previous menu
+                """);
     }
 
     static void startSelfServiceMenu(Connection conn){
@@ -578,51 +519,27 @@ public class MainMenu {
 
         selfServiceDisplay();
         while (running){
+            System.out.println("Enter 0 if you wish to see the self service menu options again.");
 
             input = keyboard.nextLine();
 
-            if(input.equals("1")){
-
-            }
-            else if (input.equals("2")){
-
-            }
-            else if (input.equals("3")){
-
-            }
-            else if (input.equals("4")){
-
-            }
-            else if (input.equals("5")){
-
-            }
-            else if (input.equals("6")){
-
-            }
-            else if (input.equals("7")){
-
-            }
-            else if (input.equals("8")){
-
-            }
-            else if (input.equals("9")){
-                // probably an overload that takes the provided employee ID as an argument
-            }
-            else if (input.equals("10")){
-                // probably an overload that takes the provided employee ID as an argument
-            }
-            else if (input.equals("11")){
-                running = false;
-            }
-            else{
-                System.out.println("Invalid input. \n");
+            switch (input) {
+                case "0" -> selfServiceDisplay();
+                case "1" -> System.out.println("placeholder");
+                case "2" -> System.out.println("placeholder");
+                case "3" -> System.out.println("placeholder");
+                case "4" -> System.out.println("placeholder");
+                case "9" -> System.out.println("placeholder"); // should be an overload that takes the already entered ID
+                case "10" -> System.out.println("placeholder"); // should be an overload that takes the already entered ID
+                case "11" -> running = false;
+                default -> System.out.println("Invalid input. \n");
             }
 
         }
     }
     public static void main(String[] args) {
 
-        // establish a database connection and assign it to a variable to be used for all future classes
+        // establish a database connection and assign it to a variable to be used for all future methods
         String dbURL = "jdbc:mysql://localhost:3306/McMillanHRIS";
         String username = "root";
         String password = "password";

@@ -151,7 +151,9 @@ public final class StatementCreator {
         }catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
-            return null;
+            String[] emptyRecord = new String[1];
+            emptyRecord[0] = "";
+            return emptyRecord;
         }
     }
 
@@ -160,10 +162,11 @@ public final class StatementCreator {
     static String validateUpdateLine(int columnNumber, ResultSet resultSet){
         try{
 
-            Integer precision = resultSet.getMetaData().getPrecision(columnNumber);
+            // get the maximum number of characters that can be input for this column
+            int precision = resultSet.getMetaData().getPrecision(columnNumber);
 
             if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("INT")){
-                System.out.println("It must be an integer value less than " + precision + " characters long");
+                System.out.println("It must be an integer value less than or equal to " + precision + " characters long");
 
                 String input = integerValidator();
 
@@ -249,10 +252,14 @@ public final class StatementCreator {
         try {
 
             // first, make a select statement to obtain the necessary column metadata
+            // maybe take the metadata as a parameter instead of the resultset
             ResultSetMetaData metaData = resultSet.getMetaData();
 
             // get the number of columns to loop through them while assigning new values
             int numberOfColumns = metaData.getColumnCount();
+
+            // records the number of valid values entered by the user
+            int valuesEntered = 0;
 
 
             // start at 2, because the primary key cannot be changed
@@ -267,8 +274,12 @@ public final class StatementCreator {
 
                     String input = validateUpdateLine(i, resultSet);
 
+                    if (input != "") valuesEntered++;
+
                     update.append(input);
                 }
+
+                if (valuesEntered == 0) return "";
 
                 // remove trailing comma and append the WHERE
                 if (update.charAt(update.length() - 2) == ',') update.deleteCharAt(update.length() - 2);
@@ -293,7 +304,8 @@ public final class StatementCreator {
 
             String update = createUpdateStatement(id, table, pkColumnName, resultSet);
 
-            stmt.executeUpdate(update);
+            if (update != "" && stmt.executeUpdate(update) > 0) System.out.println("\nRecord altered");
+            else System.out.println("\nNo alterations made");
 
 
         }catch (SQLException e) {
@@ -305,7 +317,7 @@ public final class StatementCreator {
     static String validateInsertLine(int columnNumber, ResultSet resultSet){
         try{
 
-            Integer precision = resultSet.getMetaData().getPrecision(columnNumber);
+            int precision = resultSet.getMetaData().getPrecision(columnNumber);
 
             if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("INT")){
                 System.out.println("It must be an integer value less than " + precision + " characters long");
@@ -399,6 +411,9 @@ public final class StatementCreator {
             // get the number of columns to loop through them while assigning new values
             int numberOfColumns = metaData.getColumnCount();
 
+            // records the number of valid values entered by the user
+            int valuesEntered = 0;
+
 
             // start at 2, because the primary key cannot be assigned
             while (resultSet.next()) {
@@ -409,8 +424,12 @@ public final class StatementCreator {
 
                     String input = validateInsertLine(i, resultSet);
 
+                    if (input != "") valuesEntered++;
+
                     secondLine.append(input);
                 }
+
+                if (valuesEntered == 0) return "";
 
                 // remove trailing comma and append the WHERE
                 if (insert.charAt(insert.length() - 2) == ',') insert.deleteCharAt(insert.length() - 2);
@@ -440,7 +459,8 @@ public final class StatementCreator {
 
             String insert = createInsertStatement(table, resultSet);
 
-            stmt.executeUpdate(insert);
+            if (insert != "" && stmt.executeUpdate(insert) > 0) System.out.println("\nRecord created");
+            else System.out.println("\nInvalid input, no new record created");
 
 
         }catch (SQLException e) {
