@@ -1,6 +1,6 @@
 SET FOREIGN_KEY_CHECKS=1;
 
-INSERT INTO mcmillanhris.employee(fname, lname, address, city, state, zip, email, phone, employment_status)
+INSERT INTO mcmillanhris.employee(first_name, last_name, address, city, state, zip, email, phone, employment_status)
 VALUES
 ('Sarah', 'Brown', '77 High Street', 'Minneapolis', 'MN', '56792', 'sarahbrown@gmail.com', '123-456-7890', 'hired'),
 ('Penny', 'Smart', '99 12th Street', 'Tampa', 'FL', '56792', 'pennysmart@gmail.com', '234-567-8901', 'hired'),
@@ -23,7 +23,7 @@ VALUES
 ('Harper', 'Langley', '395 Pearl Street', 'Charlotte', 'NC', '32984', 'harperlangley@gmail.com', '497-868-8357', 'hired'),
 ('Chloe', 'Hansley', '567 Mill Street', 'Charlotte', 'NC', '32984', 'chloehansley@gmail.com', '597-808-9749', 'hired');
 
-INSERT INTO benefits(emplid, healthcare, dentalcare, annual_sickdays, annual_vacationdays, pension, ira, maternityleave)
+INSERT INTO benefits(employee_id, healthcare, dentalcare, annual_sick_days, annual_vacation_days, pension, ira, maternity_leave)
 VALUES
 	(1, "Blue Cross Blue Shield", "Blue Cross Blue Shield",3, 20, 1026.2,"true", "20 paid days, 60 unpaid days"),
 	(2, "Blue Cross Blue Shield", "Blue Cross Blue Shield",3, 20, 1026.2,"true", "20 paid days, 60 unpaid days"),
@@ -46,7 +46,7 @@ VALUES
     (19, "Blue Cross Blue Shield", "Blue Cross Blue Shield",3, 20, 1026.2,"true", "20 paid days, 60 unpaid days"),
     (20, "Blue Cross Blue Shield", "Blue Cross Blue Shield",3, 20, 1026.2,"true", "20 paid days, 60 unpaid days");
 
-INSERT INTO state_tax(emplid, required, rate)
+INSERT INTO state_tax(employee_id, required, rate)
 VALUES
 	(1, true, 6.8),
     (2, true, 6.0),
@@ -69,7 +69,7 @@ VALUES
     (19, true, 4.7),
     (20, true, 4.7);
 
-INSERT INTO federal_tax(emplid, bracket, rate)
+INSERT INTO federal_tax(employee_id, bracket, rate)
 VALUES
 	(1, "40320", 12),
 	(2, "57600", 22),
@@ -92,7 +92,7 @@ VALUES
     (19, "57600", 22),
     (20, "34560", 12);
 
-INSERT INTO payroll(emplid, rates, rates_overtime, totalhours, totalovertime, grosspay)
+INSERT INTO payroll(employee_id, rates, rates_overtime, total_hours, total_overtime, grosspay)
 VALUES
 	(1, 21, 31.5, 40, 0, 40320),
     (2, 30, 45, 40, 0, 56700),
@@ -121,13 +121,13 @@ VALUES
     ("99 Unlan Lane", "Tampa", "FL"),
     ("56 Purdue Lane", "Charlotte", "NC");
 
-INSERT INTO departments(locid, title, employeecount)
+INSERT INTO departments(location_id, title, employee_count)
 VALUES
 	(1, "Home Base", 30),
     (2, "Tampa", 6),
     (3, "Charlotte", 8);
 
-INSERT INTO job(depid, emplid, title, started, ended)
+INSERT INTO job(departments_id, employee_id, title, started, ended)
 VALUES
 	(1, 1, "accounting", '2020-05-06', '2022-07-21'),
     (2, 2, "marketing", '2020-05-06', '2020-07-21'),
@@ -150,7 +150,7 @@ VALUES
     (3, 19, "marketing", '2020-05-06', '2022-07-21'),
     (3, 20, "hr expert", '2020-05-06', '2022-07-21');
 
-INSERT INTO certifications(emplid, cert_type, experation)
+INSERT INTO certifications(employee_id, certifications_type, experation)
 VALUES
 	(1, "ITIL Certification", '2029-09-12'),
     (2, "ITIL Certification", '2029-09-12'),
@@ -173,7 +173,7 @@ VALUES
     (19, "ITIL Certification", '2029-09-12'),
     (20, "ITIL Certification", '2029-09-12');
     
-INSERT INTO training(emplid, training_type, date_completed)
+INSERT INTO training(employee_id, training_type, date_completed)
 VALUES
 	(1, "harrassment training", '2021-06-08'),
     (2, "harrassment training", '2021-06-08'),
@@ -196,7 +196,7 @@ VALUES
     (19, "harrassment training", '2021-06-08'),
     (20, "harrassment training", '2021-06-08');
     
-INSERT INTO qualifications(emplid, qual_type, institution, qual_year)
+INSERT INTO qualifications(employee_id, qualifications_type, institution, year_accomplished)
 VALUES 
 	(1, "bachelor's of science", "Cambridge University", '2019-06-07'),
     (2, "bachelor's of science", "Cambridge University", '2019-06-07'),
@@ -219,7 +219,7 @@ VALUES
     (19, "bachelor's of science", "Cambridge University", '2019-06-07'),
     (20, "bachelor's of science", "Cambridge University", '2019-06-07');
     
-INSERT INTO applicant_tracking(emplid, date_applied, date_hired)
+INSERT INTO applicant_tracking(employee_id, date_applied, date_hired)
 VALUES
 	(1, '2020-05-07', '2020-07-05'),
     (2, '2020-05-07', '2020-07-05'),
@@ -242,7 +242,7 @@ VALUES
     (19, '2020-05-07', '2020-07-05'),
     (20, '2020-05-07', '2020-07-05');
    
-INSERT INTO application_stage(appid, app_stage, started, ended, interview_notes, passed)
+INSERT INTO application_stage(applicant_id, application_stage, started, ended, interview_notes, passed)
 VALUES
 	(1, "hired", '2020-05-07', '2020-07-05', "They had very good communication skills", true),
     (2, "hired", '2020-05-07', '2020-07-05', "They had very good communication skills", true),
@@ -265,7 +265,7 @@ VALUES
     (19, "hired", '2020-05-07', '2020-07-05', "They had very good communication skills", true),
     (20, "hired", '2020-05-07', '2020-07-05', "They had very good communication skills", true);
 
-INSERT INTO evaluation(emplid, communication, job_knowledge, punctuality, dependability, overall, evaluator, date_written, comments)
+INSERT INTO evaluation(employee_id, communication, job_knowledge, punctuality, dependability, overall, evaluator, date_written, comments)
 VALUES
 	(1, 10, 7, 8, 2, 14, "Sam Higgins", '2020-06-05', "Amazing Candidate"),
     (2, 10, 7, 8, 2, 14, "Sam Higgins", '2020-06-05', "Amazing Candidate"),
