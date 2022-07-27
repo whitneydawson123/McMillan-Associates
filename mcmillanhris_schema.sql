@@ -45,7 +45,7 @@ FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 
 CREATE TABLE federal_tax(
 federal_tax_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-employee_id INT UNSIGNED NOT NULL,
+employee_id INT UNSIGNED UNIQUE NOT NULL,
 bracket VARCHAR(10) NOT NULL,
 rate DOUBLE NOT NULL,
 PRIMARY KEY  (federal_tax_id),
@@ -74,9 +74,9 @@ FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 -- Table structure for table `benefits`
 --
 
-CREATE TABLE benefits(
-benefits_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-employee_id INT UNSIGNED NOT NULL,
+CREATE TABLE benefit(
+benefit_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+employee_id INT UNSIGNED UNIQUE NOT NULL,
 healthcare VARCHAR(45) NOT NULL,
 dentalcare VARCHAR(45) NOT NULL,
 annual_vacation_days INT NOT NULL,
@@ -84,7 +84,7 @@ annual_sick_days INT NOT NULL,
 pension DOUBLE NOT NULL,
 ira VARCHAR(45) NOT NULL,
 maternity_leave VARCHAR(45) NOT NULL,
-PRIMARY KEY  (benefits_id),
+PRIMARY KEY  (benefit_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -100,12 +100,12 @@ CREATE TABLE location(
 
 -- Table structure for table 'departments'
 
-CREATE TABLE departments(
-	departments_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE department(
+	department_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     location_id INT UNSIGNED NOT NULL,
     title VARCHAR (45) NOT NULL,
     employee_count INT NOT NULL,
-    PRIMARY KEY (departments_id),
+    PRIMARY KEY (department_id),
     FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -113,24 +113,24 @@ CREATE TABLE departments(
 
 CREATE TABLE job(
 	job_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	departments_id INT UNSIGNED NOT NULL,
+	department_id INT UNSIGNED NOT NULL,
     employee_id INT UNSIGNED NOT NULL,
     title VARCHAR (50) NOT NULL,
     started DATE,
     ended DATE,
     PRIMARY KEY(job_id),
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE,
-    FOREIGN KEY (departments_id) REFERENCES departments(departments_id) ON DELETE CASCADE
+    FOREIGN KEY (department_id) REFERENCES department(department_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table `certifications`
 
-CREATE TABLE certifications(
-certifications_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE certification(
+certification_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED NOT NULL,
-certifications_type VARCHAR (100) NOT NULL,
+certification_type VARCHAR (100) NOT NULL,
 experation DATE,
-PRIMARY KEY (certifications_id),
+PRIMARY KEY (certification_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -147,13 +147,13 @@ FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 
 -- Table structure for table `qualifications`
 
-CREATE TABLE qualifications(
-qualifications_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE qualification(
+qualification_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED NOT NULL,
-qualifications_type VARCHAR (100) NOT NULL,
+qualification_type VARCHAR (100) NOT NULL,
 institution VARCHAR(50) NOT NULL,
 year_accomplished DATE,
-PRIMARY KEY (qualifications_id),
+PRIMARY KEY (qualification_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -161,7 +161,7 @@ FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 
 CREATE TABLE applicant_tracking(
 applicant_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-employee_id INT UNSIGNED NOT NULL,
+employee_id INT UNSIGNED UNIQUE NOT NULL,
 date_applied DATE,
 date_hired DATE,
 PRIMARY KEY (applicant_id),
