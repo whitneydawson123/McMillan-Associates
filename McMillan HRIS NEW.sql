@@ -100,8 +100,8 @@ CREATE TABLE location(
 
 -- Table structure for table 'departments'
 
-CREATE TABLE departments(
-	departments_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE department(
+	department_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     location_id INT UNSIGNED NOT NULL,
     title VARCHAR (45) NOT NULL,
     employee_count INT NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE departments(
 
 CREATE TABLE job(
 	job_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	departments_id INT UNSIGNED NOT NULL,
+	department_id INT UNSIGNED NOT NULL,
     employee_id INT UNSIGNED NOT NULL,
     title VARCHAR (50) NOT NULL,
     started DATE,
@@ -125,10 +125,10 @@ CREATE TABLE job(
 
 -- Table structure for table `certifications`
 
-CREATE TABLE certifications(
-certifications_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE certification(
+certification_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED NOT NULL,
-certifications_type VARCHAR (100) NOT NULL,
+certification_type VARCHAR (100) NOT NULL,
 experation DATE,
 PRIMARY KEY (certifications_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
@@ -147,10 +147,10 @@ FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 
 -- Table structure for table `qualifications`
 
-CREATE TABLE qualifications(
-qualifications_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE qualification(
+qualification_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED NOT NULL,
-qualifications_type VARCHAR (100) NOT NULL,
+qualification_type VARCHAR (100) NOT NULL,
 institution VARCHAR(50) NOT NULL,
 year_accomplished DATE,
 PRIMARY KEY (qualifications_id),
