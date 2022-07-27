@@ -90,6 +90,24 @@ class StatementCreatorTest {
     }
 
     @Test
+    void doesGetRowCountReturnAnAccurateNumberOfRows(){
+        try(Connection conn = StatementCreator.createTestDatabaseConnection()){
+
+            Statement stmt = conn.createStatement();
+
+            String sql = "SELECT * FROM job WHERE title LIKE \"%Manager\"";
+
+            ResultSet resultSet = stmt.executeQuery(sql);
+
+            assertEquals(3, StatementCreator.getRowCount(resultSet));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+    }
+
+    @Test
     void doesValidateUpdateLineReturnRoundedDecimalInProperFormat(){
         try(Connection conn = StatementCreator.createTestDatabaseConnection()){
 
@@ -157,6 +175,28 @@ class StatementCreatorTest {
 
     @Test
     void recordCreator() {
+    }
+
+    @Test
+    void canCreateReadableColumnsLikeReturnMultipleRecords(){
+
+        try(Connection conn = StatementCreator.createTestDatabaseConnection()){
+
+            Statement stmt = conn.createStatement();
+
+            String[] lines = StatementCreator.createReadableColumnsLike(
+                    "Manager", "job", "title", conn);
+
+            assertEquals("job_id: 4", lines[0]);
+            assertEquals("job_id: 17", lines[6]);
+            assertEquals("job_id: 18", lines[12]);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+
+
     }
 
     @Test

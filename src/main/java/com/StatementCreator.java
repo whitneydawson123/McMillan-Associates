@@ -2,6 +2,7 @@ package com;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
 
+import javax.xml.transform.Result;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -83,6 +84,20 @@ public final class StatementCreator {
         }
     }
 
+    // returns the number of records from a given ResultSet
+    static int getRowCount(ResultSet resultSet){
+        int rowCount = 0;
+        try {
+            while (resultSet.next()){
+                rowCount++;
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+        System.out.println(e.getMessage());
+        }
+        return rowCount;
+    }
+
     // deletes records from the database and returns a string message with the number of rows deleted
     static String recordDeleter(String id, String table,  String pkColumnName, Connection conn){
 
@@ -129,23 +144,43 @@ public final class StatementCreator {
 
         try (Statement stmt = conn.createStatement()) {
 
+            ResultSet copy = stmt.executeQuery(sql);
+            int numberOfRows = getRowCount(copy);
+
             ResultSet resultSet = stmt.executeQuery(sql);
 
             ResultSetMetaData metaData = resultSet.getMetaData();
 
+
             int numberOfColumns = metaData.getColumnCount();
 
-            String[] record = new String[numberOfColumns];
+            String[] record = new String[numberOfColumns * numberOfRows];
+
+            int currentRow = 0;
 
             while (resultSet.next()) {
                 for (int i = 1; i <= numberOfColumns; i++) {
 
                     String columnValue = resultSet.getString(i);
 
-                    record[i-1] = metaData.getColumnName(i) + ": " + columnValue;
+                    record[i-1 + (currentRow * numberOfColumns)] = metaData.getColumnName(i) + ": " + columnValue;
+
+                    // insert a line between records for readability
+                    if (i == 1) {
+                        record[(currentRow * numberOfColumns)] =
+                                "--------------\n" + record[(currentRow * numberOfColumns)];
+                    }
                 }
-                return record;
+                currentRow++;
             }
+
+            // an empty record is returned if there were no results
+            if (record[0] == null || record[0].isBlank()){
+                String[] emptyRecord = new String[1];
+                emptyRecord[0] = "";
+                return emptyRecord;
+            }
+            return record;
         }catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
@@ -153,11 +188,59 @@ public final class StatementCreator {
             emptyRecord[0] = "";
             return emptyRecord;
         }
+    }
 
-        // an empty record is returned if there were no results
-        String[] emptyRecord = new String[1];
-        emptyRecord[0] = "";
-        return emptyRecord;
+    // an alternative method to createReadableColumns where LIKE is used instead of = in the SELECT statement
+    static String[] createReadableColumnsLike(String comparison, String table, String identifyingColumn, Connection conn){
+
+        String sql = "SELECT * FROM " + table + " WHERE " + identifyingColumn + " LIKE \"%" + comparison + "\"";
+
+        try (Statement stmt = conn.createStatement()) {
+
+            ResultSet copy = stmt.executeQuery(sql);
+            int numberOfRows = getRowCount(copy);
+
+            ResultSet resultSet = stmt.executeQuery(sql);
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+
+
+            int numberOfColumns = metaData.getColumnCount();
+
+            String[] record = new String[numberOfColumns * numberOfRows];
+
+            int currentRow = 0;
+
+            while (resultSet.next()) {
+                for (int i = 1; i <= numberOfColumns; i++) {
+
+                    String columnValue = resultSet.getString(i);
+
+                    record[i-1 + (currentRow * numberOfColumns)] = metaData.getColumnName(i) + ": " + columnValue;
+
+                    // insert a line between records for readability
+                    if (i == 1) {
+                        record[(currentRow * numberOfColumns)] =
+                                "--------------\n" + record[(currentRow * numberOfColumns)];
+                    }
+                }
+                currentRow++;
+            }
+
+            // an empty record is returned if there were no results
+            if (record[0] == null || record[0].isBlank()){
+                String[] emptyRecord = new String[1];
+                emptyRecord[0] = "";
+                return emptyRecord;
+            }
+            return record;
+        }catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            String[] emptyRecord = new String[1];
+            emptyRecord[0] = "";
+            return emptyRecord;
+        }
     }
 
 

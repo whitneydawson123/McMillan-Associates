@@ -175,11 +175,15 @@ public class MainMenu {
 
                     if (!id.equals("")) {
                         String[] lines = StatementCreator.createReadableColumns(
-                                id, "job", "departments_id", conn);
+                                id, "job", "department_id", conn);
                         StatementCreator.recordPrinter(lines);
                     }
                 }
-                case "3" -> System.out.println("placeholder for manager filter");
+                case "3" -> {
+                    String[] lines = StatementCreator.createReadableColumnsLike(
+                            "Manager", "job", "title", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
                 case "4" -> {
                     System.out.print("Please enter the ID of the job to be updated: ");
 
@@ -382,7 +386,7 @@ public class MainMenu {
                 6. Edit application stage record
                 7. Create application stage record
                 8. Delete application stage record
-                9. Previous menu
+                9. Return to previous menu
                 """);
     }
 
@@ -393,7 +397,7 @@ public class MainMenu {
 
         applicantStageDisplay();
         while (running){
-            System.out.println("Enter 0 if you wish to see the applicant information menu options again.");
+            System.out.println("Enter 0 if you wish to see the applicant stage menu options again.");
 
             input = keyboard.nextLine();
 
@@ -680,7 +684,7 @@ public class MainMenu {
                 4. Edit payroll by id
                 5. Create new payroll
                 6. Delete payroll
-                7. Return to main menu
+                7. Return to previous menu
                 """);
     }
 
@@ -731,7 +735,7 @@ public class MainMenu {
                     }
                 }
                 case "4" -> {
-                    System.out.print("Please enter the ID of the training record to be updated: ");
+                    System.out.print("Please enter the ID of the payroll record to be updated: ");
 
                     String id = StatementCreator.integerValidator();
 
@@ -740,7 +744,7 @@ public class MainMenu {
                 }
                 case "5" -> StatementCreator.recordInserter("payroll", conn);
                 case "6" -> {
-                    System.out.print("Please enter the ID of the training record to be deleted: ");
+                    System.out.print("Please enter the ID of the payroll record to be deleted: ");
 
                     String id = StatementCreator.integerValidator();
 
@@ -765,7 +769,7 @@ public class MainMenu {
                 2. Edit benefits of an employee
                 3. Create benefits record for an employee
                 4. Delete benefits record of employee
-                5. Return to main menu
+                5. Return to previous menu
                 """);
     }
 
