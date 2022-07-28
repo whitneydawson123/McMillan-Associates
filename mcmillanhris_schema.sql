@@ -64,7 +64,7 @@ rates_overtime DOUBLE NOT NULL,
 total_hours INT NOT NULL,
 total_overtime INT NOT NULL,
 grosspay DOUBLE NOT NULL,
-period DATE,
+period DATE NOT NULL,
 PRIMARY KEY  (payroll_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
