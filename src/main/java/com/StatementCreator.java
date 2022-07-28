@@ -252,21 +252,22 @@ public final class StatementCreator {
 
             // get the maximum number of characters that can be input for this column
             int precision = resultSet.getMetaData().getPrecision(columnNumber);
+            String columnTypeName = resultSet.getMetaData().getColumnTypeName(columnNumber);
 
-            if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("INT")){
-                System.out.println("It must be an integer value less than or equal to " + precision + " characters long");
+            if (columnTypeName.equals("INT") || columnTypeName.equals("INT UNSIGNED")){
+                System.out.println("It must be an integer value less than " + precision + " characters long");
 
                 String input = integerValidator();
 
                 if (input.equals("")) return "";
 
                 if (input.length() < precision) {
-                    return resultSet.getMetaData().getColumnName(columnNumber) + " = " + input + ", ";
+                    return input + ", ";
                 }
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("DOUBLE")){
+            else if (columnTypeName.equals("DOUBLE")){
                 System.out.println("It must be a double value less than " + precision + " characters long");
 
                 String input = doubleValidator();
@@ -274,12 +275,12 @@ public final class StatementCreator {
                 if (input.equals("")) return "";
 
                 if (input.length() < precision) {
-                    return resultSet.getMetaData().getColumnName(columnNumber) + " = " + input + ", ";
+                    return input + ", ";
                 }
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("BOOLEAN")){
+            else if (columnTypeName.equals("BOOLEAN")){
                 System.out.println("It must be 'true' or 'false'");
 
                 String input = boolValidator();
@@ -287,12 +288,12 @@ public final class StatementCreator {
                 if (input.equals("")) return "";
 
                 if (input.length() < precision) {
-                    return resultSet.getMetaData().getColumnName(columnNumber) + " = " + input + ", ";
+                    return input + ", ";
                 }
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("DATE")){
+            else if (columnTypeName.equals("DATE")){
                 System.out.println("It must be a date in the format YYYY-MM-DD" + precision + " characters long");
 
                 String input = dateValidator();
@@ -300,12 +301,12 @@ public final class StatementCreator {
                 if (input.equals("")) return "";
 
                 if (input.length() < precision) {
-                    return resultSet.getMetaData().getColumnName(columnNumber) + " = '" + input + "', ";
+                    return "'" + input + "', ";
                 }
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("VARCHAR")){
+            else if (columnTypeName.equals("VARCHAR")){
                 System.out.println("It must be less than " + precision + " characters long");
 
                 Scanner keyboard = new Scanner(System.in);
@@ -318,7 +319,7 @@ public final class StatementCreator {
                 if (input.length() >= precision) {
                     input = input.substring(0, precision - 1);
                 }
-                return resultSet.getMetaData().getColumnName(columnNumber) + " = '" + input + "', ";
+                return "'" + input + "', ";
             }
 
             else return ""; // return an empty string to keep the value the same
@@ -453,8 +454,9 @@ public final class StatementCreator {
         try{
 
             int precision = resultSet.getMetaData().getPrecision(columnNumber);
+            String columnTypeName = resultSet.getMetaData().getColumnTypeName(columnNumber);
 
-            if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("INT")){
+            if (columnTypeName.equals("INT") || columnTypeName.equals("INT UNSIGNED")){
                 System.out.println("It must be an integer value less than " + precision + " characters long");
 
                 String input = integerValidator();
@@ -467,7 +469,7 @@ public final class StatementCreator {
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("DOUBLE")){
+            else if (columnTypeName.equals("DOUBLE")){
                 System.out.println("It must be a double value less than " + precision + " characters long");
 
                 String input = doubleValidator();
@@ -480,7 +482,7 @@ public final class StatementCreator {
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("BOOLEAN")){
+            else if (columnTypeName.equals("BOOLEAN")){
                 System.out.println("It must be 'true' or 'false'");
 
                 String input = boolValidator();
@@ -493,7 +495,7 @@ public final class StatementCreator {
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("DATE")){
+            else if (columnTypeName.equals("DATE")){
                 System.out.println("It must be a date in the format YYYY-MM-DD" + precision + " characters long");
 
                 String input = dateValidator();
@@ -506,7 +508,7 @@ public final class StatementCreator {
 
             }
 
-            else if (resultSet.getMetaData().getColumnTypeName(columnNumber).equals("VARCHAR")){
+            else if (columnTypeName.equals("VARCHAR")){
                 System.out.println("It must be less than " + precision + " characters long");
 
                 Scanner keyboard = new Scanner(System.in);
