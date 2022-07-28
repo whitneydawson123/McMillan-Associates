@@ -194,7 +194,7 @@ public final class StatementCreator {
     // an alternative method to createReadableColumns where LIKE is used instead of = in the SELECT statement
     static String[] createReadableColumnsLike(String comparison, String table, String identifyingColumn, Connection conn){
 
-        String sql = "SELECT * FROM " + table + " WHERE " + identifyingColumn + " LIKE \"%" + comparison + "\"";
+        String sql = "SELECT * FROM " + table + " WHERE " + identifyingColumn + " LIKE \"" + comparison + "%\"";
 
         // empty record to return if query fails
         String[] emptyRecord = new String[1];
