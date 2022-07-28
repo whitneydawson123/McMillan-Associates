@@ -124,7 +124,7 @@ public final class StatementCreator {
         System.out.println("\n");
 
         // check if the primary key exists first
-        if (lines[0] == null){
+        if (lines[0].isBlank()){
             System.out.println("No record found with that ID");
         }
         else{
@@ -142,9 +142,16 @@ public final class StatementCreator {
 
         String sql = "SELECT * FROM " + table + " WHERE " + identifyingColumn + " = " + id;
 
+        // empty record to return if query fails
+        String[] emptyRecord = new String[1];
+        emptyRecord[0] = "";
+
         try (Statement stmt = conn.createStatement()) {
 
             ResultSet copy = stmt.executeQuery(sql);
+
+            if (!copy.isBeforeFirst()) return emptyRecord;
+
             int numberOfRows = getRowCount(copy);
 
             ResultSet resultSet = stmt.executeQuery(sql);
@@ -175,17 +182,11 @@ public final class StatementCreator {
             }
 
             // an empty record is returned if there were no results
-            if (record[0] == null || record[0].isBlank()){
-                String[] emptyRecord = new String[1];
-                emptyRecord[0] = "";
-                return emptyRecord;
-            }
+            if (record[0] == null || record[0].isBlank()) return emptyRecord;
             return record;
         }catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
-            String[] emptyRecord = new String[1];
-            emptyRecord[0] = "";
             return emptyRecord;
         }
     }
@@ -195,9 +196,16 @@ public final class StatementCreator {
 
         String sql = "SELECT * FROM " + table + " WHERE " + identifyingColumn + " LIKE \"%" + comparison + "\"";
 
+        // empty record to return if query fails
+        String[] emptyRecord = new String[1];
+        emptyRecord[0] = "";
+
         try (Statement stmt = conn.createStatement()) {
 
             ResultSet copy = stmt.executeQuery(sql);
+
+            if (!copy.isBeforeFirst()) return emptyRecord;
+
             int numberOfRows = getRowCount(copy);
 
             ResultSet resultSet = stmt.executeQuery(sql);
@@ -228,17 +236,11 @@ public final class StatementCreator {
             }
 
             // an empty record is returned if there were no results
-            if (record[0] == null || record[0].isBlank()){
-                String[] emptyRecord = new String[1];
-                emptyRecord[0] = "";
-                return emptyRecord;
-            }
+            if (record[0] == null || record[0].isBlank()) return emptyRecord;
             return record;
         }catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
-            String[] emptyRecord = new String[1];
-            emptyRecord[0] = "";
             return emptyRecord;
         }
     }

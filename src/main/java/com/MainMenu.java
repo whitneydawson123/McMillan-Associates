@@ -58,17 +58,18 @@ public class MainMenu {
                 This is the employee information menu. Enter the corresponding number to select an option.
 
                 1. Basic information
-                2. Jobs and positions
-                3. Benefits
-                4. Payroll
-                5. Certifications\s
-                6. Qualifications\s
-                7. Training
-                8. Tax information menu
-                9. Edit employee basic information
-                10. Create new employee
-                11. Delete employee
-                12. Return to main menu
+                2. Search by last name
+                3. Jobs and positions
+                4. Benefits
+                5. Payroll
+                6. Certifications\s
+                7. Qualifications\s
+                8. Training
+                9. Tax information menu
+                10. Edit employee basic information
+                11. Create new employee
+                12. Delete employee
+                13. Return to main menu
                 """);
     }
 
@@ -96,14 +97,23 @@ public class MainMenu {
                         StatementCreator.recordPrinter(lines);
                     }
                 }
-                case "2" -> startJobsMenu(conn);
-                case "3" -> startBenefitsMenu(conn);
-                case "4" -> startPayrollMenu(conn);
-                case "5" -> startCertificationsMenu(conn);
-                case "6" -> startQualificationsMenu(conn);
-                case "7" -> startTrainingMenu(conn);
-                case "8" -> startTaxInformationMenu(conn);
-                case "9" -> {
+                case "2" -> {
+                    System.out.print("Please enter the last name to search for: ");
+
+                    String lastName =  keyboard.nextLine();
+
+                    String[] lines = StatementCreator.createReadableColumnsLike(
+                            lastName, "employee", "last_name", conn);
+                    StatementCreator.recordPrinter(lines);
+                }
+                case "3" -> startJobsMenu(conn);
+                case "4" -> startBenefitsMenu(conn);
+                case "5" -> startPayrollMenu(conn);
+                case "6" -> startCertificationsMenu(conn);
+                case "7" -> startQualificationsMenu(conn);
+                case "8" -> startTrainingMenu(conn);
+                case "9" -> startTaxInformationMenu(conn);
+                case "10" -> {
                     System.out.print("Please enter the ID of the employee to be updated: ");
 
                     String id = StatementCreator.integerValidator();
@@ -111,8 +121,8 @@ public class MainMenu {
                     if (!id.equals("")) StatementCreator.recordUpdater(
                             id, "employee", "employee_id", conn);
                 }
-                case "10" -> StatementCreator.recordInserter("employee", conn);
-                case "11" -> {
+                case "11" -> StatementCreator.recordInserter("employee", conn);
+                case "12" -> {
                     System.out.print("Please enter the ID of the employee to be deleted: ");
 
                     String id = StatementCreator.integerValidator();
@@ -123,7 +133,7 @@ public class MainMenu {
                     }
 
                 }
-                case "12" -> running = false;
+                case "13" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
 
