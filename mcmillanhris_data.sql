@@ -92,6 +92,7 @@ VALUES
     (19, "Married", 0.9, '2022-07-01'),
     (20, "Head", 1.9, '2022-07-01');
 
+
 INSERT INTO payroll(employee_id, rates, rates_overtime, total_hours, total_overtime, period)
 VALUES
 	(1, 0, 0, 0, 0, '2022-07-01'),
