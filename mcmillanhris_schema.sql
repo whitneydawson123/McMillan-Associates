@@ -202,7 +202,7 @@ CONSTRAINT FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE 
 
 CREATE VIEW paycheck
 AS
-SELECT employee.employee_id AS ID, payroll.payroll_id AS payroll, 
+SELECT employee.employee_id AS ID, payroll.payroll_id AS payroll,  payroll.period AS period,
 (payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime) AS gross_pay,
 (((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime)) - 
 (((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime / 100)) * state_tax.rate) - 
