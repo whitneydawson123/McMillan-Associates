@@ -33,8 +33,9 @@ CREATE TABLE employee(
 CREATE TABLE state_tax(
 state_tax_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED NOT NULL,
-required BOOLEAN,
+required BOOLEAN NOT NULL,
 rate DOUBLE NOT NULL,
+period DATE NOT NULL,
 PRIMARY KEY  (state_tax_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -45,9 +46,10 @@ FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 
 CREATE TABLE federal_tax(
 federal_tax_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-employee_id INT UNSIGNED UNIQUE NOT NULL,
+employee_id INT UNSIGNED NOT NULL,
 bracket VARCHAR(10) NOT NULL,
 rate DOUBLE NOT NULL,
+period DATE NOT NULL,
 PRIMARY KEY  (federal_tax_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -63,8 +65,7 @@ rates DOUBLE NOT NULL,
 rates_overtime DOUBLE NOT NULL,
 total_hours INT NOT NULL,
 total_overtime INT NOT NULL,
-grosspay DOUBLE NOT NULL,
-period DATE,
+period DATE NOT NULL,
 PRIMARY KEY  (payroll_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -116,7 +117,7 @@ CREATE TABLE job(
 	department_id INT UNSIGNED NOT NULL,
     employee_id INT UNSIGNED NOT NULL,
     title VARCHAR (50) NOT NULL,
-    started DATE,
+    started DATE NOT NULL,
     ended DATE,
     PRIMARY KEY(job_id),
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE,
@@ -162,7 +163,7 @@ FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 CREATE TABLE applicant_tracking(
 applicant_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED UNIQUE NOT NULL,
-date_applied DATE,
+date_applied DATE NOT NULL,
 date_hired DATE,
 PRIMARY KEY (applicant_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
@@ -174,7 +175,7 @@ CREATE TABLE application_stage(
 application_stage_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 applicant_id INT UNSIGNED NOT NULL,
 application_stage VARCHAR (50) NOT NULL,
-started DATE,
+started DATE NOT NULL,
 ended DATE,
 interview_notes VARCHAR (50) NOT NULL,
 passed BOOLEAN,
@@ -193,11 +194,23 @@ punctuality INT NOT NULL,
 dependability INT NULL,
 overall INT NOT NULL,
 evaluator VARCHAR (50) NOT NULL,
-date_written DATE,
+date_written DATE NOT NULL,
 comments VARCHAR (50) NOT NULL,
 PRIMARY KEY (evaluation_id),
 CONSTRAINT FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE VIEW paycheck
+AS
+SELECT employee.employee_id AS ID, payroll.payroll_id AS payroll, 
+(payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime) AS gross_pay,
+(((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime)) - 
+(((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime / 100)) * state_tax.rate) - 
+(((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime / 100)) * federal_tax.rate)) AS net_pay
+FROM employee
+JOIN payroll ON employee.employee_id = payroll.employee_id
+JOIN state_tax ON state_tax.employee_id = employee.employee_id AND state_tax.period = payroll.period
+JOIN federal_tax ON federal_tax.employee_id = employee.employee_id AND federal_tax.period = payroll.period;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
