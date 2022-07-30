@@ -4,11 +4,37 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.sql.*;
-import java.util.concurrent.locks.StampedLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StatementCreatorTest {
+
+    // allows test methods to access output and error streams
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    // backups of the original input and output streams to restore
+    private final PrintStream originalOut = System.out;
+    private final PrintStream originalErr = System.err;
+    private final InputStream originalIn = System.in;
+
+
+    // helper method to set up input and output streams for testing
+    void setUpStreams(String input) {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+
+        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+    }
+
+
+    // restores the original input and output streams after testing
+    void restoreStreams() {
+        System.out.flush();
+        System.setOut(originalOut);
+        System.setErr(originalErr);
+        System.setIn(originalIn);
+    }
 
     // tests whether the test database can be created and connected to
     @Test
@@ -90,6 +116,134 @@ class StatementCreatorTest {
     }
 
     @Test
+    void doesBoolValidatorReturnFalseInput(){
+        String upperFalse = "False";
+        String lowerFalse = "false";
+
+        InputStream sysInBackup = System.in; // backup of System.in
+        ByteArrayInputStream in = new ByteArrayInputStream(upperFalse.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("false",
+                StatementCreator.boolValidator(),
+                "Passes if 'False' string input returns false");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+
+        in = new ByteArrayInputStream(lowerFalse.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("false",
+                StatementCreator.boolValidator(),
+                "Passes if 'false' string input returns false");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+    }
+
+    @Test
+    void doesBoolValidatorReturnTrueInput(){
+        String upperTrue = "True";
+        String lowerTrue = "true";
+
+        InputStream sysInBackup = System.in; // backup of System.in
+        ByteArrayInputStream in = new ByteArrayInputStream(upperTrue.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("true",
+                StatementCreator.boolValidator(),
+                "Passes if 'True' string input returns true");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+
+        in = new ByteArrayInputStream(lowerTrue.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("true",
+                StatementCreator.boolValidator(),
+                "Passes if 'true' string input returns true");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+    }
+
+    @Test
+    void doesBoolValidatorReturnFalseForBadInput(){
+        String integer = "1";
+        String nonsense = "nonsense";
+
+        InputStream sysInBackup = System.in; // backup of System.in
+        ByteArrayInputStream in = new ByteArrayInputStream(integer.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("false",
+                StatementCreator.boolValidator(),
+                "Passes if '1' string input returns false");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+
+        in = new ByteArrayInputStream(nonsense.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("false",
+                StatementCreator.boolValidator(),
+                "Passes if nonsense string input returns false");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+    }
+
+    @Test
+    void doesDateValidatorReturnProperlyInputDateInProperFormat(){
+        String validDate = "1994-03-11";
+        String validDateOmission = "1994-3-11";
+
+        InputStream sysInBackup = System.in; // backup of System.in
+        ByteArrayInputStream in = new ByteArrayInputStream(validDate.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("1994-03-11",
+                StatementCreator.dateValidator(), "Passes if the date is returned");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+
+        in = new ByteArrayInputStream(validDateOmission.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+        assertEquals("1994-03-11",
+                StatementCreator.dateValidator(), "Passes if the date is returned");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+    }
+
+    @Test
+    void doesDateValidatorReturnBlankForBadInput(){
+        String nonsense = "nonsense";
+
+        InputStream sysInBackup = System.in; // backup of System.in
+        ByteArrayInputStream in = new ByteArrayInputStream(nonsense.getBytes()); // create the test input
+        System.setIn(in); // set the test input
+
+
+        assertEquals("",
+                StatementCreator.dateValidator(),
+                "Passes an empty string is returned");
+
+        System.setIn(sysInBackup); // restore System.in using the backup
+    }
+
+    @Test
+    void doesDateValidatorReturnBlankForBadInputPlus(){
+        setUpStreams("nonsense");
+        assertEquals("",
+                StatementCreator.dateValidator(),
+                "Passes an empty string is returned");
+
+
+        assertEquals("Invalid Date input.",
+                outContent.toString().trim().replace("\r",""),
+                "Passes if the printed output is accurate");
+        restoreStreams();
+    }
+
+    @Test
     void doesGetRowCountReturnAnAccurateNumberOfRows(){
         try(Connection conn = StatementCreator.createTestDatabaseConnection()){
 
@@ -123,7 +277,7 @@ class StatementCreatorTest {
             ByteArrayInputStream in = new ByteArrayInputStream(simulation.getBytes()); // create the test input
             System.setIn(in); // set the test input
 
-            String line = StatementCreator.validateUpdateLine(3, resultSet);
+            String line = StatementCreator.validateUpdateLine(3, resultSet.getMetaData());
 
             assertEquals("rates = 22.21", line);
 
@@ -151,7 +305,7 @@ class StatementCreatorTest {
             ByteArrayInputStream in = new ByteArrayInputStream(simulation.getBytes()); // create the test input
             System.setIn(in); // set the test input
 
-            String line = StatementCreator.validateUpdateLine(3, resultSet);
+            String line = StatementCreator.validateUpdateLine(3, resultSet.getMetaData());
 
             assertEquals("", line);
 

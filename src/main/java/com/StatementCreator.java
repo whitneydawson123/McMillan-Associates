@@ -61,14 +61,14 @@ public final class StatementCreator {
 
             return parsedInput.toString();
 
-        } catch(NumberFormatException e) {
+        } catch(IllegalArgumentException e) {
             System.out.println("Invalid Date input. \n");
 
             return "";
         }
     }
 
-    // attempts to parse input as a boolean, and returns an empty string if it cannot
+    // attempts to parse input as a boolean, and returns false for any invalid inputs
     static String boolValidator(){
         Scanner keyboard = new Scanner(System.in);
 
@@ -80,7 +80,7 @@ public final class StatementCreator {
         } catch(NumberFormatException e) {
             System.out.println("Invalid Boolean input. \n");
 
-            return "";
+            return "false";
         }
     }
 
@@ -247,12 +247,12 @@ public final class StatementCreator {
 
 
     // returns a valid String to be added to the UPDATE statement
-    static String validateUpdateLine(int columnNumber, ResultSet resultSet){
+    static String validateUpdateLine(int columnNumber, ResultSetMetaData resultSet){
         try{
 
             // get the maximum number of characters that can be input for this column
-            int precision = resultSet.getMetaData().getPrecision(columnNumber);
-            String columnTypeName = resultSet.getMetaData().getColumnTypeName(columnNumber);
+            int precision = resultSet.getPrecision(columnNumber);
+            String columnTypeName = resultSet.getColumnTypeName(columnNumber);
 
             if (columnTypeName.equals("INT") || columnTypeName.equals("INT UNSIGNED")){
                 System.out.println("It must be an integer value less than " + precision + " characters long");
@@ -284,17 +284,15 @@ public final class StatementCreator {
                 System.out.println("It must be 'true' or 'false'");
 
                 String input = boolValidator();
-
-                if (input.equals("")) return "";
-
-                if (input.length() < precision) {
-                    return input + ", ";
-                }
+                return input + ", ";
 
             }
 
             else if (columnTypeName.equals("DATE")){
-                System.out.println("It must be a date in the format YYYY-MM-DD" + precision + " characters long");
+                System.out.println("It must be a date in the format YYYY-MM-DD");
+                if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
+                    System.out.println(". This field is required.");
+                }
 
                 String input = dateValidator();
 
@@ -361,7 +359,7 @@ public final class StatementCreator {
                     System.out.println("Enter a new value for " + metaData.getColumnName(i) +
                             ", or enter nothing to keep it the same");
 
-                    String input = validateUpdateLine(i, resultSet);
+                    String input = validateUpdateLine(i, metaData);
 
                     if (input != "") valuesEntered++;
 
@@ -426,7 +424,7 @@ public final class StatementCreator {
             // start at 2, because the primary key cannot be changed
             for (int i = 2; i <= numberOfColumns; i++) {
                     if (columnName.equals(metaData.getColumnName(i))){
-                        update.append(validateUpdateLine(i, resultSet));
+                        update.append(validateUpdateLine(i, metaData));
                         valuesEntered++;
                     }
             }
@@ -450,11 +448,11 @@ public final class StatementCreator {
     }
 
     // returns a valid String to be added to the INSERT statement
-    static String validateInsertLine(int columnNumber, ResultSet resultSet){
+    static String validateInsertLine(int columnNumber, ResultSetMetaData resultSet){
         try{
 
-            int precision = resultSet.getMetaData().getPrecision(columnNumber);
-            String columnTypeName = resultSet.getMetaData().getColumnTypeName(columnNumber);
+            int precision = resultSet.getPrecision(columnNumber);
+            String columnTypeName = resultSet.getColumnTypeName(columnNumber);
 
             if (columnTypeName.equals("INT") || columnTypeName.equals("INT UNSIGNED")){
                 System.out.println("It must be an integer value less than " + precision + " characters long");
@@ -486,17 +484,15 @@ public final class StatementCreator {
                 System.out.println("It must be 'true' or 'false'");
 
                 String input = boolValidator();
-
-                if (input.equals("")) return "";
-
-                if (input.length() < precision) {
-                    return input + ", ";
-                }
+                return input + ", ";
 
             }
 
             else if (columnTypeName.equals("DATE")){
-                System.out.println("It must be a date in the format YYYY-MM-DD" + precision + " characters long");
+                System.out.println("It must be a date in the format YYYY-MM-DD");
+                if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
+                    System.out.println(". This field is required.");
+                }
 
                 String input = dateValidator();
 
@@ -534,7 +530,7 @@ public final class StatementCreator {
         return "";
     }
 
-    // creates an INSERT sql statement from user input
+    // creates an INSERT sql statement from user input, returning the entire query as a String
     static String createInsertStatement(String table, ResultSet resultSet){
 
         StringBuilder insert = new StringBuilder("INSERT INTO " + table + " (");
@@ -559,7 +555,7 @@ public final class StatementCreator {
                     insert.append(metaData.getColumnName(i) + ", ");
                     System.out.println("Enter a value for " + metaData.getColumnName(i));
 
-                    String input = validateInsertLine(i, resultSet);
+                    String input = validateInsertLine(i, metaData);
 
                     if (input != "") valuesEntered++;
 

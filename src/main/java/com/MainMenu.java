@@ -934,9 +934,10 @@ public class MainMenu {
                 7. Update phone
                 8. View benefits
                 9. View payroll
-                10. View qualifications
-                11. View certifications
-                12. Return to previous menu
+                10. View paycheck
+                11. View qualifications
+                12. View certifications
+                13. Return to previous menu
                 """);
     }
 
@@ -975,16 +976,36 @@ public class MainMenu {
                     StatementCreator.recordPrinter(lines);
                 }
                 case "10" -> {
+                    System.out.println("Please enter the period the paycheck is from, " +
+                            "or enter nothing to view every paycheck");
+
+                    String dateInput = StatementCreator.dateValidator();
+
+                    if (dateInput.isBlank()){
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id, "paycheck", "ID", conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                    else{
+                        String[] lines = StatementCreator.createReadableColumns(
+                                id + " AND period = '" + dateInput + "'",
+                                "paycheck",
+                                "ID",
+                                conn);
+                        StatementCreator.recordPrinter(lines);
+                    }
+                }
+                case "11" -> {
                     String[] lines = StatementCreator.createReadableColumns(
                             id, "qualification", "employee_id", conn);
                     StatementCreator.recordPrinter(lines);
                 }
-                case "11" -> {
+                case "12" -> {
                     String[] lines = StatementCreator.createReadableColumns(
                             id, "certification", "employee_id", conn);
                     StatementCreator.recordPrinter(lines);
                 }
-                case "12" -> running = false;
+                case "13" -> running = false;
                 default -> System.out.println("Invalid input. \n");
             }
 
