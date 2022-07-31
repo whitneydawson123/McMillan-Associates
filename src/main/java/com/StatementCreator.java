@@ -1,17 +1,16 @@
+// McMillanHRIS Java console application
+// SDET Group 3
+// Programmer and designer: Andrew Hodson
+
 package com;
 
-import org.apache.ibatis.jdbc.ScriptRunner;
-
-import javax.xml.transform.Result;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
 import java.util.Scanner;
 
-// A helper class for creating SQL statements as strings
+// A helper class for creating and executing SQL statements
+@SuppressWarnings("SqlDialectInspection")
 public final class StatementCreator {
 
     // attempts to parse input as an Integer, and returns an empty string if it cannot
@@ -20,7 +19,9 @@ public final class StatementCreator {
         Scanner keyboard = new Scanner(System.in);
 
         try {
-            int parsedInput = Integer.parseInt(keyboard.nextLine());
+            String input = keyboard.nextLine();
+            if (input.isBlank()) return input;
+            int parsedInput = Integer.parseInt(input);
 
             return parsedInput + "";
 
@@ -38,7 +39,9 @@ public final class StatementCreator {
         Scanner keyboard = new Scanner(System.in);
 
         try {
-            double parsedInput = Double.parseDouble(keyboard.nextLine());
+            String input = keyboard.nextLine();
+            if (input.isBlank()) return input;
+            double parsedInput = Double.parseDouble(input);
 
             BigDecimal big = new BigDecimal(parsedInput).setScale(2, RoundingMode.HALF_UP);
             double roundedDouble = big.doubleValue();
@@ -57,7 +60,9 @@ public final class StatementCreator {
         Scanner keyboard = new Scanner(System.in);
 
         try {
-            Date parsedInput = Date.valueOf(keyboard.nextLine());
+            String input = keyboard.nextLine();
+            if (input.isBlank()) return input;
+            Date parsedInput = Date.valueOf(input);
 
             return parsedInput.toString();
 
@@ -73,7 +78,9 @@ public final class StatementCreator {
         Scanner keyboard = new Scanner(System.in);
 
         try {
-            Boolean parsedInput = Boolean.parseBoolean(keyboard.nextLine());
+            String input = keyboard.nextLine();
+            if (input.isBlank()) return input;
+            Boolean parsedInput = Boolean.parseBoolean(input);
 
             return parsedInput.toString();
 
@@ -137,7 +144,7 @@ public final class StatementCreator {
     }
 
 
-    // adds each read column as a string in the array in the format "column name: column value"
+    // adds each queried column as a string in the array in the format "column name: column value"
     static String[] createReadableColumns(String id, String table, String identifyingColumn, Connection conn){
 
         String sql = "SELECT * FROM " + table + " WHERE " + identifyingColumn + " = " + id;
@@ -254,73 +261,67 @@ public final class StatementCreator {
             int precision = resultSet.getPrecision(columnNumber);
             String columnTypeName = resultSet.getColumnTypeName(columnNumber);
 
-            if (columnTypeName.equals("INT") || columnTypeName.equals("INT UNSIGNED")){
-                System.out.println("It must be an integer value less than " + precision + " characters long");
+            switch (columnTypeName) {
+                case "INT": case "INT UNSIGNED": {
+                    System.out.println("It must be an integer value less than " + precision + " characters long");
 
-                String input = integerValidator();
+                    String input = integerValidator();
 
-                if (input.equals("")) return "";
+                    if (input.equals("")) return "";
 
-                if (input.length() < precision) {
-                    return input + ", ";
+                    if (input.length() < precision) {
+                        return resultSet.getColumnName(columnNumber) + " = " + input + ", ";
+                    }
+
+                    return "";
                 }
+                case "DOUBLE": {
+                    System.out.println("It must be a double value less than " + precision + " characters long");
 
-            }
+                    String input = doubleValidator();
 
-            else if (columnTypeName.equals("DOUBLE")){
-                System.out.println("It must be a double value less than " + precision + " characters long");
+                    if (input.equals("")) return "";
 
-                String input = doubleValidator();
+                    if (input.length() < precision) {
+                        return resultSet.getColumnName(columnNumber) + " = " + input + ", ";
+                    }
 
-                if (input.equals("")) return "";
-
-                if (input.length() < precision) {
-                    return input + ", ";
+                    return "";
                 }
+                case "BIT": {
+                    System.out.println("It must be 'true' or 'false'");
 
-            }
+                    String input = boolValidator();
+                    return resultSet.getColumnName(columnNumber) + " = " + input + ", ";
 
-            else if (columnTypeName.equals("BOOLEAN")){
-                System.out.println("It must be 'true' or 'false'");
-
-                String input = boolValidator();
-                return input + ", ";
-
-            }
-
-            else if (columnTypeName.equals("DATE")){
-                System.out.println("It must be a date in the format YYYY-MM-DD");
-                if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
-                    System.out.println(". This field is required.");
                 }
+                case "DATE": {
+                    System.out.println("It must be a date in the format YYYY-MM-DD");
 
-                String input = dateValidator();
+                    String input = dateValidator();
 
-                if (input.equals("")) return "";
+                    if (input.isBlank()) return "";
 
-                if (input.length() < precision) {
-                    return "'" + input + "', ";
+                    return resultSet.getColumnName(columnNumber) + " = " + "'" + input + "', ";
                 }
+                case "VARCHAR": {
+                    System.out.println("It must be less than " + precision + " characters long");
 
-            }
+                    Scanner keyboard = new Scanner(System.in);
 
-            else if (columnTypeName.equals("VARCHAR")){
-                System.out.println("It must be less than " + precision + " characters long");
+                    String input = keyboard.nextLine();
 
-                Scanner keyboard = new Scanner(System.in);
+                    if (input.equals("")) return "";
 
-                String input = keyboard.nextLine();
-
-                if (input.equals("")) return "";
-
-                // cut off excess characters if input is too long
-                if (input.length() >= precision) {
-                    input = input.substring(0, precision - 1);
+                    // cut off excess characters if input is too long
+                    if (input.length() >= precision) {
+                        input = input.substring(0, precision - 1);
+                    }
+                    return resultSet.getColumnName(columnNumber) + " = " +  "'" + input + "', ";
                 }
-                return "'" + input + "', ";
+                default:
+                    return ""; // return an empty string to keep the value the same
             }
-
-            else return ""; // return an empty string to keep the value the same
 
 
         }catch (SQLException e) {
@@ -361,7 +362,7 @@ public final class StatementCreator {
 
                     String input = validateUpdateLine(i, metaData);
 
-                    if (input != "") valuesEntered++;
+                    if (!input.isBlank()) valuesEntered++;
 
                     update.append(input);
                 }
@@ -380,7 +381,7 @@ public final class StatementCreator {
         return null;
     }
 
-    // updates a record with new values input for each column
+    // updates a record, prompting new values input for each column
     static void recordUpdater(String id, String table, String pkColumnName, Connection conn){
 
         String select = "SELECT * FROM " + table + " WHERE " + pkColumnName + " = " + id;
@@ -401,7 +402,7 @@ public final class StatementCreator {
     }
 
     // updates a single column of the employee table, returning the number of records altered
-    static int employeeColumnUpdater(String id, String columnName, Connection conn){
+    static void employeeColumnUpdater(String id, String columnName, Connection conn){
 
         String select = "SELECT * FROM  employee WHERE " + columnName + " = " + id;
         StringBuilder update = new StringBuilder("UPDATE employee SET ");
@@ -431,7 +432,7 @@ public final class StatementCreator {
 
             if (valuesEntered == 0){
                 System.out.println("\nNo alterations made");
-                return 0;
+                return;
             }
 
             // remove trailing comma and append the WHERE
@@ -440,11 +441,9 @@ public final class StatementCreator {
 
             System.out.println("\nRecord altered");
             int output = stmt.executeUpdate(update.toString());
-            return output;
         }catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
     }
 
     // returns a valid String to be added to the INSERT statement
@@ -454,73 +453,82 @@ public final class StatementCreator {
             int precision = resultSet.getPrecision(columnNumber);
             String columnTypeName = resultSet.getColumnTypeName(columnNumber);
 
-            if (columnTypeName.equals("INT") || columnTypeName.equals("INT UNSIGNED")){
-                System.out.println("It must be an integer value less than " + precision + " characters long");
+            switch (columnTypeName) {
+                case "INT": case "INT UNSIGNED": {
+                    System.out.println("It must be an integer value less than " + precision + " characters long");
+                    if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
+                        System.out.println("This field is required.");
+                    }
 
-                String input = integerValidator();
+                    String input = integerValidator();
 
-                if (input.equals("")) return "";
+                    if (input.isBlank()) return "";
 
-                if (input.length() < precision) {
+                    if (input.length() < precision) {
+                        return input + ", ";
+                    }
+
+                    return "";
+                }
+                case "DOUBLE": {
+                    System.out.println("It must be a double value less than " + precision + " characters long");
+                    if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
+                        System.out.println("This field is required.");
+                    }
+
+                    String input = doubleValidator();
+
+                    if (input.equals("")) return "";
+
+                    if (input.length() < precision) {
+                        return input + ", ";
+                    }
+
+                    break;
+                }
+                case "BIT": {
+                    System.out.println("It must be 'true' or 'false'");
+                    if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
+                        System.out.println("This field is required.");
+                    }
+
+                    String input = boolValidator();
                     return input + ", ";
+
                 }
+                case "DATE": {
+                    System.out.println("It must be a date in the format YYYY-MM-DD");
+                    if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
+                        System.out.println("This field is required.");
+                    }
 
-            }
+                    String input = dateValidator();
 
-            else if (columnTypeName.equals("DOUBLE")){
-                System.out.println("It must be a double value less than " + precision + " characters long");
+                    if (input.isBlank()) return "";
 
-                String input = doubleValidator();
-
-                if (input.equals("")) return "";
-
-                if (input.length() < precision) {
-                    return input + ", ";
-                }
-
-            }
-
-            else if (columnTypeName.equals("BOOLEAN")){
-                System.out.println("It must be 'true' or 'false'");
-
-                String input = boolValidator();
-                return input + ", ";
-
-            }
-
-            else if (columnTypeName.equals("DATE")){
-                System.out.println("It must be a date in the format YYYY-MM-DD");
-                if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
-                    System.out.println(". This field is required.");
-                }
-
-                String input = dateValidator();
-
-                if (input.equals("")) return "";
-
-                if (input.length() < precision) {
                     return "'" + input + "', ";
                 }
+                case "VARCHAR": {
+                    System.out.println("It must be less than " + precision + " characters long");
+                    if (resultSet.isNullable(columnNumber) == ResultSetMetaData.columnNoNulls) {
+                        System.out.println("This field is required.");
+                    }
 
-            }
+                    Scanner keyboard = new Scanner(System.in);
 
-            else if (columnTypeName.equals("VARCHAR")){
-                System.out.println("It must be less than " + precision + " characters long");
+                    String input = keyboard.nextLine();
 
-                Scanner keyboard = new Scanner(System.in);
+                    if (input.equals("")) return "";
 
-                String input = keyboard.nextLine();
-
-                if (input.equals("")) return "";
-
-                // cut off excess characters if input is too long
-                if (input.length() >= precision) {
-                    input = input.substring(0, precision - 1);
+                    // cut off excess characters if input is too long
+                    if (input.length() >= precision) {
+                        input = input.substring(0, precision - 1);
+                    }
+                    return "'" + input + "', ";
                 }
-                return "'" + input + "', ";
+                default:
+                    return ""; // return an empty string to keep the value the same
             }
-
-            else return ""; // return an empty string to keep the value the same
 
 
         }catch (SQLException e) {
@@ -551,13 +559,14 @@ public final class StatementCreator {
             // start at 2, because the primary key cannot be assigned
             while (resultSet.next()) {
                 for (int i = 2; i <= numberOfColumns; i++) {
-
-                    insert.append(metaData.getColumnName(i) + ", ");
                     System.out.println("Enter a value for " + metaData.getColumnName(i));
 
                     String input = validateInsertLine(i, metaData);
 
-                    if (input != "") valuesEntered++;
+                    if (input.isBlank() && metaData.isNullable(i) == ResultSetMetaData.columnNoNulls) return "";
+                    if (!input.isBlank()) insert.append(metaData.getColumnName(i) + ", ");
+
+                    valuesEntered++;
 
                     secondLine.append(input);
                 }
@@ -592,41 +601,13 @@ public final class StatementCreator {
 
             String insert = createInsertStatement(table, resultSet);
 
-            if (insert != "" && stmt.executeUpdate(insert) > 0) System.out.println("\nRecord created");
+            if (!insert.isBlank() && stmt.executeUpdate(insert) > 0) System.out.println("\nRecord created");
             else System.out.println("\nInvalid input, no new record created");
 
 
         }catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    // runs scripts to create a fresh test database connection
-    static Connection createTestDatabaseConnection() {
-
-        String schemaFilePath = "C:/Scripts/mcmillanhristest_schema.sql";
-        String dataFilePath = "C:/Scripts/mcmillanhristest_data.sql";
-
-        String dbURL = "jdbc:mysql://localhost:3306";
-        String username = "root";
-        String password = "password";
-        try {
-            Connection conn = DriverManager.getConnection(dbURL, username, password);
-
-            if (conn != null) {
-                ScriptRunner runner = new ScriptRunner(conn);
-                runner.runScript(new BufferedReader(new FileReader(schemaFilePath)));
-                runner.runScript(new BufferedReader(new FileReader(dataFilePath)));
-                System.out.println("Test database successfully created.");
-                return conn;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
     }
 
 }

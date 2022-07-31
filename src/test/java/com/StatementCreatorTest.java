@@ -1,5 +1,10 @@
+// McMillanHRIS Java console application
+// SDET Group 3
+// Programmer and designer: Andrew Hodson
+
 package com;
 
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -18,7 +23,7 @@ class StatementCreatorTest {
     private final InputStream originalIn = System.in;
 
 
-    // helper method to set up input and output streams for testing
+    // set up input and output streams for testing
     void setUpStreams(String input) {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
@@ -36,11 +41,39 @@ class StatementCreatorTest {
         System.setIn(originalIn);
     }
 
+    // runs scripts to create a fresh test database connection
+    static Connection createTestDatabaseConnection() {
+
+        String schemaFilePath = "C:/Scripts/mcmillanhristest_schema.sql";
+        String dataFilePath = "C:/Scripts/mcmillanhristest_data.sql";
+
+        String dbURL = "jdbc:mysql://localhost:3306";
+        String username = "root";
+        String password = "password";
+        try {
+            Connection conn = DriverManager.getConnection(dbURL, username, password);
+
+            if (conn != null) {
+                ScriptRunner runner = new ScriptRunner(conn);
+                runner.runScript(new BufferedReader(new FileReader(schemaFilePath)));
+                runner.runScript(new BufferedReader(new FileReader(dataFilePath)));
+                System.out.println("Test database successfully created.");
+                return conn;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     // tests whether the test database can be created and connected to
     @Test
     void canConnectToTestDatabaseAfterItsCreated() {
         try {
-            Connection conn = StatementCreator.createTestDatabaseConnection();
+            Connection conn = createTestDatabaseConnection();
 
             // test passes if connection isn't null
             if (conn != null) {
@@ -195,22 +228,19 @@ class StatementCreatorTest {
         String validDate = "1994-03-11";
         String validDateOmission = "1994-3-11";
 
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(validDate.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("1994-03-11");
 
         assertEquals("1994-03-11",
                 StatementCreator.dateValidator(), "Passes if the date is returned");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams(); // restore System.in using the backup
 
-        in = new ByteArrayInputStream(validDateOmission.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("1994-3-11");
 
         assertEquals("1994-03-11",
                 StatementCreator.dateValidator(), "Passes if the date is returned");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams(); // restore System.in using the backup
     }
 
     @Test
@@ -245,7 +275,7 @@ class StatementCreatorTest {
 
     @Test
     void doesGetRowCountReturnAnAccurateNumberOfRows(){
-        try(Connection conn = StatementCreator.createTestDatabaseConnection()){
+        try(Connection conn = createTestDatabaseConnection()){
 
             Statement stmt = conn.createStatement();
 
@@ -263,11 +293,11 @@ class StatementCreatorTest {
 
     @Test
     void doesValidateUpdateLineReturnRoundedDecimalInProperFormat(){
-        try(Connection conn = StatementCreator.createTestDatabaseConnection()){
+        try(Connection conn = createTestDatabaseConnection()){
 
             Statement stmt = conn.createStatement();
 
-            String select = "SELECT * FROM payroll  WHERE  payid = 1";
+            String select = "SELECT * FROM payroll  WHERE  payroll_id = 1";
 
             ResultSet resultSet = stmt.executeQuery(select);
 
@@ -279,7 +309,7 @@ class StatementCreatorTest {
 
             String line = StatementCreator.validateUpdateLine(3, resultSet.getMetaData());
 
-            assertEquals("rates = 22.21", line);
+            assertEquals("rates = 22.21, ", line);
 
             System.setIn(sysInBackup); // restore System.in using the backup
 
@@ -291,11 +321,11 @@ class StatementCreatorTest {
 
     @Test
     void doesValidateUpdateLineReturnWhenInputIsInvalid(){
-        try(Connection conn = StatementCreator.createTestDatabaseConnection()){
+        try(Connection conn = createTestDatabaseConnection()){
 
             Statement stmt = conn.createStatement();
 
-            String select = "SELECT * FROM payroll  WHERE  payid = 1";
+            String select = "SELECT * FROM payroll  WHERE  payroll_id = 1";
 
             ResultSet resultSet = stmt.executeQuery(select);
 
@@ -317,33 +347,19 @@ class StatementCreatorTest {
         }
     }
 
-
-
-    @Test
-    void recordDeleter() {
-    }
-
-    @Test
-    void recordUpdater() {
-    }
-
-    @Test
-    void recordCreator() {
-    }
-
     @Test
     void canCreateReadableColumnsLikeReturnMultipleRecords(){
 
-        try(Connection conn = StatementCreator.createTestDatabaseConnection()){
+        try(Connection conn = createTestDatabaseConnection()){
 
             Statement stmt = conn.createStatement();
 
             String[] lines = StatementCreator.createReadableColumnsLike(
                     "Manager", "job", "title", conn);
 
-            assertEquals("job_id: 4", lines[0]);
-            assertEquals("job_id: 17", lines[6]);
-            assertEquals("job_id: 18", lines[12]);
+            assertEquals("department_id: 3", lines[1]);
+            assertEquals("department_id: 1", lines[7]);
+            assertEquals("department_id: 2", lines[13]);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -351,39 +367,6 @@ class StatementCreatorTest {
         }
 
 
-    }
-
-    @Test
-    void doesCreateUpdateStatementWork(){
-        try(Connection conn = StatementCreator.createTestDatabaseConnection()){
-
-            Statement stmt = conn.createStatement();
-
-            String select = "SELECT * FROM employee WHERE  emplid = 1";
-
-            String id = "1";
-            String table = "employee";
-            String pkColumnName = "emplid";
-            ResultSet resultSet = stmt.executeQuery(select);
-
-
-            String simulation = "asdcfghjkl09876543";
-
-            InputStream sysInBackup = System.in; // backup of System.in
-            //ByteArrayInputStream in = new ByteArrayInputStream(simulation.getBytes()); // create the test input
-            ByteArrayInputStream in = new ByteArrayInputStream(("1" + System.lineSeparator() + "2").getBytes());
-            System.setIn(in); // set the test input
-
-            String line = StatementCreator.createUpdateStatement(id, table, pkColumnName, resultSet);
-
-            assertEquals("", line);
-
-            System.setIn(sysInBackup); // restore System.in using the backup
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }
     }
 
 }

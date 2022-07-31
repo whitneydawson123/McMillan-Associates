@@ -1,9 +1,44 @@
+// McMillanHRIS Java console application
+// SDET Group 3
+// Programmer and designer: Andrew Hodson
+
 package com;
 
 import java.sql.*;
 import java.util.Scanner;
 
 public class MainMenu {
+
+    // creates a connection object to provide to the main menu, which is then passed to the rest of the program
+    public static void main(String[] args) {
+
+        // establish a database connection and assign it to a variable to be used for all future methods
+        String dbURL = "jdbc:mysql://localhost:3306/McMillanHRIS";
+
+        Scanner keyboard = new Scanner(System.in);
+
+        // prompt for valid login credentials for the server
+        System.out.println("\nPlease enter the username: ");
+        String username = keyboard.nextLine();
+
+        System.out.println("\nPlease enter the password: ");
+        String password = keyboard.nextLine();
+
+        try{
+            Connection conn = DriverManager.getConnection(dbURL, username, password);
+
+            if (conn != null) {
+                System.out.println("\nConnected to McMillanHRIS\n");
+                startMainMenu(conn);
+                conn.close();
+            }
+        }
+        catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+
+    }
 
     static void mainDisplay(){
         System.out.println("""
@@ -1011,38 +1046,6 @@ public class MainMenu {
 
         }
     }
-    public static void main(String[] args) {
-
-        // establish a database connection and assign it to a variable to be used for all future methods
-        String dbURL = "jdbc:mysql://localhost:3306/McMillanHRIS";
-        String username = "root";
-        String password = "password";
-        try{
-            Connection conn = DriverManager.getConnection(dbURL, username, password);
-
-            if (conn != null) {
-                System.out.println("Connected to McMillanHRIS");
-                startMainMenu(conn);
-                conn.close();
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }
-
-
-    }
-
-
-
-
-
-
-
-
-
-
 
 
 }
