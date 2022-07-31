@@ -63,8 +63,8 @@ payroll_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED NOT NULL,
 rates DOUBLE NOT NULL,
 rates_overtime DOUBLE NOT NULL,
-total_hours INT NOT NULL,
-total_overtime INT NOT NULL,
+total_hours DOUBLE NOT NULL,
+total_overtime DOUBLE NOT NULL,
 period DATE NOT NULL,
 PRIMARY KEY  (payroll_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
@@ -205,8 +205,8 @@ AS
 SELECT employee.employee_id AS ID, payroll.payroll_id AS payroll,  payroll.period AS period,
 (payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime) AS gross_pay,
 (((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime)) - 
-(((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime / 100)) * state_tax.rate) - 
-(((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime / 100)) * federal_tax.rate)) AS net_pay
+(((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime)) * state_tax.rate / 100) - 
+(((payroll.total_hours * payroll.rates) + (payroll.total_overtime * payroll.rates_overtime)) * federal_tax.rate) / 100) AS net_pay
 FROM employee
 JOIN payroll ON employee.employee_id = payroll.employee_id
 JOIN state_tax ON state_tax.employee_id = employee.employee_id AND state_tax.period = payroll.period
