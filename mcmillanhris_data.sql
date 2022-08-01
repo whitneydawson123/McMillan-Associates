@@ -151,7 +151,7 @@ VALUES
     (3, 19, "fired", '2020-05-06', '2022-07-21'),
     (3, 20, "fired", '2020-05-06', '2022-07-21');
 
-INSERT INTO certification(employee_id, certification_type, experation)
+INSERT INTO certification(employee_id, certification_type, expiration)
 VALUES
 	(1, "ITIL Certification", '2029-09-12'),
     (2, "ITIL Certification", '2029-09-12'),
