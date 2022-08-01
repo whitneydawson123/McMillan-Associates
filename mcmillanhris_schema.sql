@@ -130,7 +130,7 @@ CREATE TABLE certification(
 certification_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 employee_id INT UNSIGNED NOT NULL,
 certification_type VARCHAR (100) NOT NULL,
-experation DATE,
+expiration DATE,
 PRIMARY KEY (certification_id),
 FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
