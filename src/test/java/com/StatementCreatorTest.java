@@ -43,141 +43,109 @@ class StatementCreatorTest {
     @Test
     void doesIntegerValidatorReturnEmptyStringWithNonIntegerInput() {
 
-        String notAnInt = "Not an integer";
-
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(notAnInt.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("Not an integer");
 
         assertEquals("", StatementCreator.integerValidator());
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesIntegerValidatorReturnTheIntegerGivenStringWithOnlyIntegerFive() {
 
-        String stringInt = "5";
-
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(stringInt.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("5");
 
         assertEquals("5", StatementCreator.integerValidator());
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesDoubleValidatorRoundDownToTwoDecimalPlacesAccurately(){
-        String stringDouble = "3.155";
 
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(stringDouble.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("3.155");
 
         assertEquals("3.15",
                 StatementCreator.doubleValidator(),
                 "Passes if the parsed double input 3.155 rounds to 3.15");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesDoubleValidatorRoundUpToTwoDecimalPlacesAccurately(){
-        String stringDouble = "3.156";
 
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(stringDouble.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("3.156");
 
         assertEquals("3.16",
                 StatementCreator.doubleValidator(),
                 "Passes if the parsed double input 3.156 rounds to 3.16");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesBoolValidatorReturnFalseInput(){
-        String upperFalse = "False";
-        String lowerFalse = "false";
 
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(upperFalse.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("False");
 
         assertEquals("false",
                 StatementCreator.boolValidator(),
                 "Passes if 'False' string input returns false");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
 
-        in = new ByteArrayInputStream(lowerFalse.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("false");
 
         assertEquals("false",
                 StatementCreator.boolValidator(),
                 "Passes if 'false' string input returns false");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesBoolValidatorReturnTrueInput(){
-        String upperTrue = "True";
-        String lowerTrue = "true";
 
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(upperTrue.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("True");
 
         assertEquals("true",
                 StatementCreator.boolValidator(),
                 "Passes if 'True' string input returns true");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
 
-        in = new ByteArrayInputStream(lowerTrue.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("true");
 
         assertEquals("true",
                 StatementCreator.boolValidator(),
                 "Passes if 'true' string input returns true");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesBoolValidatorReturnFalseForBadInput(){
-        String integer = "1";
-        String nonsense = "nonsense";
 
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(integer.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("1");
 
         assertEquals("false",
                 StatementCreator.boolValidator(),
                 "Passes if '1' string input returns false");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
 
-        in = new ByteArrayInputStream(nonsense.getBytes()); // create the test input
-        System.setIn(in); // set the test input
+        setUpStreams("nonsense");
 
         assertEquals("false",
                 StatementCreator.boolValidator(),
                 "Passes if nonsense string input returns false");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesDateValidatorReturnProperlyInputDateInProperFormat(){
-        String validDate = "1994-03-11";
-        String validDateOmission = "1994-3-11";
-
         setUpStreams("1994-03-11");
 
         assertEquals("1994-03-11",
@@ -195,23 +163,19 @@ class StatementCreatorTest {
 
     @Test
     void doesDateValidatorReturnBlankForBadInput(){
-        String nonsense = "nonsense";
-
-        InputStream sysInBackup = System.in; // backup of System.in
-        ByteArrayInputStream in = new ByteArrayInputStream(nonsense.getBytes()); // create the test input
-        System.setIn(in); // set the test input
-
+        setUpStreams("nonsense");
 
         assertEquals("",
                 StatementCreator.dateValidator(),
                 "Passes an empty string is returned");
 
-        System.setIn(sysInBackup); // restore System.in using the backup
+        restoreStreams();
     }
 
     @Test
     void doesDateValidatorReturnBlankForBadInputPlus(){
         setUpStreams("nonsense");
+
         assertEquals("",
                 StatementCreator.dateValidator(),
                 "Passes an empty string is returned");
@@ -234,7 +198,8 @@ class StatementCreatorTest {
 
             ResultSet resultSet = stmt.executeQuery(sql);
 
-            assertEquals(3, StatementCreator.getRowCount(resultSet));
+            assertEquals(3, StatementCreator.getRowCount(resultSet),
+                    "Accurate number of rows returned to pass");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -253,17 +218,14 @@ class StatementCreatorTest {
 
             ResultSet resultSet = stmt.executeQuery(select);
 
-            String simulation = "22.213";
-
-            InputStream sysInBackup = System.in; // backup of System.in
-            ByteArrayInputStream in = new ByteArrayInputStream(simulation.getBytes()); // create the test input
-            System.setIn(in); // set the test input
+            setUpStreams("22.213");
 
             String line = StatementCreator.validateUpdateLine(3, resultSet.getMetaData());
 
-            assertEquals("rates = 22.21, ", line);
+            assertEquals("rates = 22.21, ", line,
+                    "Returns the rounded double in the proper update format to pass");
 
-            System.setIn(sysInBackup); // restore System.in using the backup
+            restoreStreams();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -282,17 +244,64 @@ class StatementCreatorTest {
 
             ResultSet resultSet = stmt.executeQuery(select);
 
-            String simulation = "asdcfghjkl09876543";
+            setUpStreams("asdcfghjkl09876543");
 
-            InputStream sysInBackup = System.in; // backup of System.in
-            ByteArrayInputStream in = new ByteArrayInputStream(simulation.getBytes()); // create the test input
-            System.setIn(in); // set the test input
+            String line = StatementCreator.validateInsertLine(3, resultSet.getMetaData());
+
+            assertEquals("", line, "returns nothing to pass");
+
+            restoreStreams();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+    }
+
+    @Test
+    void doesValidateInsertLineReturnRoundedDecimalInProperFormat(){
+        try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/McMillanHRIS",
+                "root", "password");){
+
+            Statement stmt = conn.createStatement();
+
+            String select = "SELECT * FROM payroll  WHERE  payroll_id = 1";
+
+            ResultSet resultSet = stmt.executeQuery(select);
+
+            setUpStreams("22.213");
+
+            String line = StatementCreator.validateInsertLine(3, resultSet.getMetaData());
+
+            assertEquals("22.21, ", line,
+                    "Returns the rounded double in the proper insert format to pass");
+
+            restoreStreams();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+    }
+
+    @Test
+    void doesValidateInsertLineReturnWhenInputIsInvalid(){
+        try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/McMillanHRIS",
+                "root", "password");){
+
+            Statement stmt = conn.createStatement();
+
+            String select = "SELECT * FROM payroll  WHERE  payroll_id = 1";
+
+            ResultSet resultSet = stmt.executeQuery(select);
+
+            setUpStreams("asdcfghjkl09876543");
 
             String line = StatementCreator.validateUpdateLine(3, resultSet.getMetaData());
 
             assertEquals("", line);
 
-            System.setIn(sysInBackup); // restore System.in using the backup
+            restoreStreams();
 
         } catch (SQLException e) {
             e.printStackTrace();
