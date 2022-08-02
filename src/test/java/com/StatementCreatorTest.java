@@ -4,7 +4,6 @@
 
 package com;
 
-import org.apache.ibatis.jdbc.ScriptRunner;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -39,55 +38,6 @@ class StatementCreatorTest {
         System.setOut(originalOut);
         System.setErr(originalErr);
         System.setIn(originalIn);
-    }
-
-    // runs scripts to create a fresh test database connection
-    static Connection createTestDatabaseConnection() {
-
-        String schemaFilePath = "C:/Scripts/mcmillanhristest_schema.sql";
-        String dataFilePath = "C:/Scripts/mcmillanhristest_data.sql";
-
-        String dbURL = "jdbc:mysql://localhost:3306";
-        String username = "root";
-        String password = "password";
-        try {
-            Connection conn = DriverManager.getConnection(dbURL, username, password);
-
-            if (conn != null) {
-                ScriptRunner runner = new ScriptRunner(conn);
-                runner.runScript(new BufferedReader(new FileReader(schemaFilePath)));
-                runner.runScript(new BufferedReader(new FileReader(dataFilePath)));
-                System.out.println("Test database successfully created.");
-                return conn;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
-    // tests whether the test database can be created and connected to
-    @Test
-    void canConnectToTestDatabaseAfterItsCreated() {
-        try {
-            Connection conn = createTestDatabaseConnection();
-
-            // test passes if connection isn't null
-            if (conn != null) {
-                System.out.println("Successfully connected to test database");
-                conn.close();
-                assert(true);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-            System.out.println("Failed connecting to database");
-            assert(false);
-        }
     }
 
     @Test
@@ -275,7 +225,8 @@ class StatementCreatorTest {
 
     @Test
     void doesGetRowCountReturnAnAccurateNumberOfRows(){
-        try(Connection conn = createTestDatabaseConnection()){
+        try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/McMillanHRIS",
+                "root", "password");){
 
             Statement stmt = conn.createStatement();
 
@@ -293,7 +244,8 @@ class StatementCreatorTest {
 
     @Test
     void doesValidateUpdateLineReturnRoundedDecimalInProperFormat(){
-        try(Connection conn = createTestDatabaseConnection()){
+        try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/McMillanHRIS",
+                "root", "password");){
 
             Statement stmt = conn.createStatement();
 
@@ -321,7 +273,8 @@ class StatementCreatorTest {
 
     @Test
     void doesValidateUpdateLineReturnWhenInputIsInvalid(){
-        try(Connection conn = createTestDatabaseConnection()){
+        try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/McMillanHRIS",
+                "root", "password");){
 
             Statement stmt = conn.createStatement();
 
@@ -350,9 +303,8 @@ class StatementCreatorTest {
     @Test
     void canCreateReadableColumnsLikeReturnMultipleRecords(){
 
-        try(Connection conn = createTestDatabaseConnection()){
-
-            Statement stmt = conn.createStatement();
+        try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/McMillanHRIS",
+                "root", "password");){
 
             String[] lines = StatementCreator.createReadableColumnsLike(
                     "Manager", "job", "title", conn);
@@ -365,8 +317,6 @@ class StatementCreatorTest {
             e.printStackTrace();
             System.err.println(e.getMessage());
         }
-
-
     }
 
 }
